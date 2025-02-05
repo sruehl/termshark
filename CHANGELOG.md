@@ -17,7 +17,7 @@
 
 ### Changed
 
-- Now you can build and install termshark with one command: `go install github.com/gcla/termshark/v2/cmd/termshark`
+- Now you can build and install termshark with one command: `go install github.com/sruehl/termshark/v2/cmd/termshark`
 - Fixed a bug that resulted in stream reassembly sporadically failing and displaying a blank screen.
 - Termshark will now, by default, suppress errors from tshark. You can change this via the minibuffer
   `set suppress-tshark-errors` command.
@@ -173,8 +173,8 @@ termshark -i eth0 --tty=/dev/pts/5
 
 - Initial release.
 
-[Unreleased]: https://github.com/gcla/termshark/compare/v2.1.1...HEAD
-[1.0.0]: https://github.com/gcla/termshark/releases/tag/v1.0.0
-[2.0.0]: https://github.com/gcla/termshark/releases/tag/v2.0.0
-[2.0.3]: https://github.com/gcla/termshark/releases/tag/v2.0.3
-[2.1.1]: https://github.com/gcla/termshark/releases/tag/v2.1.1
+[Unreleased]: https://github.com/sruehl/termshark/compare/v2.1.1...HEAD
+[1.0.0]: https://github.com/sruehl/termshark/releases/tag/v1.0.0
+[2.0.0]: https://github.com/sruehl/termshark/releases/tag/v2.0.0
+[2.0.3]: https://github.com/sruehl/termshark/releases/tag/v2.0.3
+[2.1.1]: https://github.com/sruehl/termshark/releases/tag/v2.1.1

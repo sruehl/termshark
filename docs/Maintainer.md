@@ -21,16 +21,16 @@ Open `termux-packages/termux-root-packages/packages/termshark/build.sh` in an ed
 
 ```bash
 cd $TERMUX_PKG_BUILDDIR
-go get -d -v github.com/gcla/termshark/v2/cmd/termshark@e185fa59d87c06fe1bafb83ce6dc15591434ccc8
-go install github.com/gcla/termshark/v2/cmd/termshark
+go get -d -v github.com/sruehl/termshark/v2/cmd/termshark@e185fa59d87c06fe1bafb83ce6dc15591434ccc8
+go install github.com/sruehl/termshark/v2/cmd/termshark
 ```
 
 to use the correct uuid - I am using the uuid for v2.0.3
 
 ```bash
 cd $TERMUX_PKG_BUILDDIR
-go get -d -v github.com/gcla/termshark/v2/cmd/termshark@73dfd1f6cb8c553eb524ebc27d991f637c1ac5ea
-go install github.com/gcla/termshark/v2/cmd/termshark
+go get -d -v github.com/sruehl/termshark/v2/cmd/termshark@73dfd1f6cb8c553eb524ebc27d991f637c1ac5ea
+go install github.com/sruehl/termshark/v2/cmd/termshark
 ```
 
 Change `TERMUX_PKG_VERSION` too.
@@ -65,7 +65,7 @@ To edit files in use by a docker container, you can use tramp + emacs with a pat
 Fork Mario's termshark-snap repository: https://github.com/mharjac/termshark-snap (@mharjac) and clone it to a recentish Linux. Edit `snapcraft.yaml`. Change `version:` and edit this section to use the correct hash - this one corresponds to v2.0.3:
 
 ```
-go get github.com/gcla/termshark/v2/cmd/termshark@73dfd1f6cb8c553eb524ebc27d991f637c1ac5ea
+go get github.com/sruehl/termshark/v2/cmd/termshark@73dfd1f6cb8c553eb524ebc27d991f637c1ac5ea
 ```
 
 From a shell, type

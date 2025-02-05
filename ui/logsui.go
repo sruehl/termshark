@@ -2,7 +2,7 @@
 // code is governed by the MIT license that can be found in the LICENSE
 // file.
 
-// +build !windows
+//go:build !windows
 
 // Package ui contains user-interface functions and helpers for termshark.
 package ui
@@ -12,13 +12,14 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/terminal"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/widgets/fileviewer"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/terminal"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/widgets/fileviewer"
 )
 
 //======================================================================
@@ -78,7 +79,7 @@ func openFileUi(file string, delete bool, opt fileviewer.Options, app gowid.IApp
 				if delete && false {
 					err := os.Remove(file)
 					if err != nil {
-						log.Warnf("Problem deleting %s: %v", file, err)
+						log.Warn().Msgf("Problem deleting %s: %v", file, err)
 					}
 				}
 			},

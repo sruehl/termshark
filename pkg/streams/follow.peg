@@ -23,7 +23,7 @@ import (
         "io/ioutil"
         "bytes"
         "unicode/utf8"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
 )
 
 }

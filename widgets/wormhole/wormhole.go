@@ -9,26 +9,27 @@ package wormhole
 import (
 	"context"
 	"fmt"
+	log "github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/clicktracker"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/divider"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/null"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/progress"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/termshark/v2"
 	"github.com/psanford/wormhole-william/wormhole"
-	log "github.com/sirupsen/logrus"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/clicktracker"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/divider"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/null"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/progress"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/text"
+
+	"github.com/sruehl/termshark/v2"
 )
 
 //======================================================================
@@ -305,7 +306,7 @@ func (w *Widget) Close() error {
 //======================================================================
 
 func logError(err error, app gowid.IApp) {
-	log.Infof("Error sending via wormhole: %v", err)
+	log.Info().Msgf("Error sending via wormhole: %v", err)
 }
 
 // XXX-word1-word2-... - max length of word in

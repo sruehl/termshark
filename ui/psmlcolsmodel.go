@@ -8,25 +8,26 @@ package ui
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/checkbox"
-	"github.com/gcla/gowid/widgets/clicktracker"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/edit"
-	"github.com/gcla/gowid/widgets/fill"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/menu"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/gowid/widgets/vpadding"
-	"github.com/gcla/termshark/v2/pkg/shark"
-	"github.com/gcla/termshark/v2/pkg/shark/wiresharkcfg"
-	"github.com/gcla/termshark/v2/widgets/filter"
-	"github.com/gcla/termshark/v2/widgets/number"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/checkbox"
+	"github.com/sruehl/gowid/widgets/clicktracker"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/edit"
+	"github.com/sruehl/gowid/widgets/fill"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/menu"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/table"
+	"github.com/sruehl/gowid/widgets/text"
+	"github.com/sruehl/gowid/widgets/vpadding"
+
+	"github.com/sruehl/termshark/v2/pkg/shark"
+	"github.com/sruehl/termshark/v2/pkg/shark/wiresharkcfg"
+	"github.com/sruehl/termshark/v2/widgets/filter"
+	"github.com/sruehl/termshark/v2/widgets/number"
 )
 
 //======================================================================
@@ -264,7 +265,7 @@ func (p *psmlColumnsModel) UpdateFromField(field string, idx int, app gowid.IApp
 	if p.spec[idx].Field.Token == "%Cus" && field != "%Cus" {
 		err := p.widgets[idx].customFilter.Close()
 		if err != nil {
-			log.Warnf("Unexpected response when closing filter: %v", err)
+			log.Warn().Msgf("Unexpected response when closing filter: %v", err)
 		}
 	}
 
@@ -303,7 +304,7 @@ func (m *psmlColumnsModel) deleteRow(trow table.RowId, app gowid.IApp) {
 	// Do this to close the filter goroutines
 	err := m.widgets[row].customFilter.Close()
 	if err != nil {
-		log.Warnf("Unexpected response when closing filter: %v", err)
+		log.Warn().Msgf("Unexpected response when closing filter: %v", err)
 	}
 
 	m.spec = append(m.spec[:row], m.spec[row+1:]...)

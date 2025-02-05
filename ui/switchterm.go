@@ -10,13 +10,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/dialog"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/paragraph"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/dialog"
+	"github.com/sruehl/gowid/widgets/framed"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/paragraph"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
 )
 
 //======================================================================

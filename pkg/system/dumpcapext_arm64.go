@@ -2,8 +2,8 @@
 // code is governed by the MIT license that can be found in the LICENSE
 // file.
 
-// +build !darwin
-// +build !linux
+//go:build !darwin && !linux
+// +build !darwin,!linux
 
 package system
 

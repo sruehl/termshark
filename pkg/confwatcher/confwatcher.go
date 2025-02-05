@@ -8,9 +8,10 @@ import (
 	"os"
 	"sync"
 
-	"github.com/gcla/termshark/v2"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
 	fsnotify "gopkg.in/fsnotify/fsnotify.v1"
+
+	"github.com/sruehl/termshark/v2"
 )
 
 //======================================================================
@@ -51,7 +52,7 @@ func New() (*ConfigWatcher, error) {
 				res.change <- struct{}{}
 
 			case err := <-watcher.Errors:
-				log.Debugf("Error from config watcher: %v", err)
+				log.Debug().Msgf("Error from config watcher: %v", err)
 
 			case <-closech:
 				break Loop

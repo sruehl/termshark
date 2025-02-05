@@ -1,6 +1,7 @@
 // Copyright 2019-2022 Graham Clark. All rights reserved.  Use of this source code is governed by the MIT license
 // that can be found in the LICENSE file.
 
+//go:build tshark
 // +build tshark
 
 package pcap
@@ -16,9 +17,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gcla/termshark/v2"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/sruehl/termshark/v2"
 )
 
 //======================================================================
@@ -242,7 +243,7 @@ func (f *fakeIfaceCmd) Start() error {
 		n, err := io.Copy(f.output, f.input)
 		if err != nil {
 			//panic(err)
-			//log.Infof("GCLA: err is %T", err)
+			//log.Info().Msgf("GCLA: err is %T", err)
 		}
 	}, Goroutinewg)
 	return nil

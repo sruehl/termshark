@@ -15,15 +15,15 @@ package wiresharkcfg
 import (
 	"io"
 	"unicode"
-        "strings"
-        "os"
-        "fmt"
-        "strconv"
-        "errors"
-        "io/ioutil"
-        "bytes"
-        "unicode/utf8"
-	log "github.com/sirupsen/logrus"
+    "strings"
+    "os"
+    "fmt"
+    "strconv"
+    "errors"
+    "io/ioutil"
+    "bytes"
+    "unicode/utf8"
+    "github.com/rs/zerolog/log"
 )
 
 }

@@ -11,10 +11,11 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
 )
 
 //======================================================================
@@ -123,7 +124,7 @@ func (c *Loader) loadConvAsync(pcapf string, convs []string, filter string, abs 
 		kill := func() {
 			err := termshark.KillIfPossible(cmd)
 			if err != nil {
-				log.Infof("Did not kill tshark conv process: %v", err)
+				log.Info().Msgf("Did not kill tshark conv process: %v", err)
 			}
 		}
 
@@ -186,7 +187,7 @@ func (c *Loader) loadConvAsync(pcapf string, convs []string, filter string, abs 
 		return
 	}
 
-	log.Infof("Started command %v with pid %d", c.convsCmd, c.convsCmd.Pid())
+	log.Info().Msgf("Started command %v with pid %d", c.convsCmd, c.convsCmd.Pid())
 
 	termshark.TrackedGo(func() {
 		termChan <- c.convsCmd.Wait()

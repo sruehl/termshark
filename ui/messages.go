@@ -13,8 +13,9 @@ import (
 	"text/template"
 
 	"github.com/blang/semver"
-	"github.com/gcla/termshark/v2"
 	"github.com/jessevdk/go-flags"
+
+	"github.com/sruehl/termshark/v2"
 )
 
 //======================================================================

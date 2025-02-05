@@ -13,11 +13,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid/widgets/table"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
 )
 
 //======================================================================
@@ -46,19 +46,19 @@ func (p *PsmlField) FromString(s string) error {
 	fields := strings.Split(s, ":")
 	if len(fields) == 1 {
 		if fields[0] == "%Cus" {
-			//logrus.Warnf("Found a custom column with no definition - ignoring")
+			//log.Warn().Msgf("Found a custom column with no definition - ignoring")
 			return InvalidCustomColumnError
 		}
 		*p = PsmlField{Token: fields[0]}
 	} else if len(fields) != 4 {
 		return InvalidCustomColumnError
-		//logrus.Warnf("Found an unexpected custom column '%s' - ignoring", pieces[0])
+		//log.Warn().Msgf("Found an unexpected custom column '%s' - ignoring", pieces[0])
 		//continue
 	} else {
 		occ, err := strconv.ParseInt(fields[2], 10, 32)
 		if err != nil {
 			return InvalidCustomColumnError
-			//logrus.Warnf("Found an unexpected occurrence in a custom column '%s' - ignoring", pieces[0])
+			//log.Warn().Msgf("Found an unexpected occurrence in a custom column '%s' - ignoring", pieces[0])
 			//continue
 		}
 		*p = PsmlField{
@@ -193,15 +193,15 @@ func InitValidColumns() error {
 	err := validColumns.InitFromCache()
 	if err != nil {
 		fmt.Printf("Termshark is initializing - please wait...\n")
-		log.Infof("Did not read cached tshark column formats (%v) - regenerating...", err)
+		log.Info().Msgf("Did not read cached tshark column formats (%v) - regenerating...", err)
 		// This will block for a second
 		err = validColumns.InitNoCache()
 		if err != nil {
-			log.Warnf("Did not generate tshark column formats (%v)", err)
+			log.Warn().Msgf("Did not generate tshark column formats (%v)", err)
 		} else {
 			err = termshark.WriteGob(termshark.CacheFile("tsharkcolumnsv2.gob.gz"), validColumns.fields)
 			if err != nil {
-				log.Warnf("Could not serialize tshark column formats (%v)", err)
+				log.Warn().Msgf("Could not serialize tshark column formats (%v)", err)
 			}
 		}
 	}
@@ -227,14 +227,14 @@ func (w *ColumnsFromTshark) InitFromCache() error {
 		return TsharkColumnsCacheOldError
 	}
 
-	f := []PsmlColumnSpec{}
+	var f []PsmlColumnSpec
 	err = termshark.ReadGob(termshark.CacheFile("tsharkcolumnsv2.gob.gz"), &f)
 	if err != nil {
 		return err
 	}
 
 	w.fields = f
-	log.Infof("Read cached tshark column formats.")
+	log.Info().Msgf("Read cached tshark column formats.")
 	return nil
 }
 
@@ -298,7 +298,7 @@ func getPsmlColumnFormatWithoutLock(colKey string) []PsmlColumnSpec {
 	res := make([]PsmlColumnSpec, 0)
 	widths := profiles.ConfStringSlice(colKey, []string{})
 	if len(widths) == 0 || (len(widths)/3)*3 != len(widths) {
-		logrus.Warnf("Unexpected %s structure - using defaults", colKey)
+		log.Warn().Msgf("Unexpected %s structure - using defaults", colKey)
 		res = DefaultPsmlColumnSpec
 	} else {
 		// Cross references with those column specs that we know about from having
@@ -315,25 +315,25 @@ func getPsmlColumnFormatWithoutLock(colKey string) []PsmlColumnSpec {
 
 			err := spec.Field.FromString(pieces[0])
 			if err != nil {
-				logrus.Warnf(err.Error())
+				log.Warn().Err(err).Msg("Could not deserialize column format")
 				continue
 			}
 
 			if _, ok := AllowedColumnFormats[spec.Field.Token]; !ok {
-				logrus.Warnf("Do not understand PSML column format token '%s' - skipping its use", pieces[0])
+				log.Warn().Msgf("Do not understand PSML column format token '%s' - skipping its use", pieces[0])
 				continue
 			}
 
 			if pieces[1] != "" {
 				spec.Name = pieces[1]
 			} else {
-				// Already confirmed it's in map
+				// Already confirmed it is in map
 				spec.Name = AllowedColumnFormats[pieces[0]].Short
 			}
 
 			visible, err := strconv.ParseBool(pieces[2])
 			if err != nil {
-				logrus.Warnf("Do not understand PSML column format hidden token '%s' - skipping its use", pieces[2])
+				log.Warn().Msgf("Do not understand PSML column format hidden token '%s' - skipping its use", pieces[2])
 				continue
 			}
 			spec.Hidden = !visible
@@ -341,7 +341,7 @@ func getPsmlColumnFormatWithoutLock(colKey string) []PsmlColumnSpec {
 			res = append(res, spec)
 		}
 		if len(res) == 0 {
-			logrus.Warnf("No configured PSML column formats were understood. Using safe default")
+			log.Warn().Msgf("No configured PSML column formats were understood. Using safe default")
 			res = DefaultPsmlColumnSpec
 		}
 

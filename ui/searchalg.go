@@ -9,10 +9,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	"github.com/gcla/termshark/v2/widgets/search"
+	"github.com/sruehl/gowid"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
+	"github.com/sruehl/termshark/v2/widgets/search"
 )
 
 //======================================================================

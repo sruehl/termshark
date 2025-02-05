@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -19,13 +20,14 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/format"
 	lru "github.com/hashicorp/golang-lru"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
 	fsnotify "gopkg.in/fsnotify/fsnotify.v1"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/format"
 )
 
 //======================================================================
@@ -346,7 +348,7 @@ func (c *ParentLoader) RenewPsmlLoader() {
 	}
 	packetCache, err := lru.New(c.opt.CacheSize)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("error creating lru cache")
 	}
 	c.PacketCache = packetCache
 }
@@ -386,7 +388,7 @@ func (p *ParentLoader) TurnOffPipe() {
 	// after stopping, we should read from the temp file and not the fifo
 	// because nothing will be feeding the fifo.
 	if p.PsmlLoader.PcapPsml != p.PdmlLoader.PcapPdml {
-		log.Infof("Switching from interface/fifo mode to file mode")
+		log.Info().Msgf("Switching from interface/fifo mode to file mode")
 		p.PsmlLoader.PcapPsml = p.PdmlLoader.PcapPdml
 	}
 }
@@ -431,7 +433,7 @@ func (c *ParentLoader) CloseMain() {
 }
 
 func (c *ParentLoader) StopLoadPsmlAndIface(cb interface{}) {
-	log.Infof("Requested stop psml + iface")
+	log.Info().Msgf("Requested stop psml + iface")
 
 	c.psmlStoppedDeliberately_ = true
 	c.loadWasCancelled = true
@@ -460,21 +462,21 @@ func (c *PacketLoader) Reload(filter string, cb interface{}, app gowid.IApp) {
 
 		c.displayFilter = filter
 
-		log.Infof("Applying display filter '%s'", filter)
+		log.Info().Msgf("Applying display filter '%s'", filter)
 
 		c.loadPsmlSync(c.InterfaceLoader, c, cb, app)
 	})
 }
 
 func (c *PacketLoader) LoadPcap(pcap string, displayFilter string, cb interface{}, app gowid.IApp) {
-	log.Infof("Requested pcap file load for '%v'", pcap)
+	log.Info().Msgf("Requested pcap file load for '%v'", pcap)
 
 	curDisplayFilter := displayFilter
 	// The channel is unbuffered, and monitored from the same goroutine, so this would block
 	// unless we start a new goroutine
 
 	if c.Pcap() == pcap && c.DisplayFilter() == curDisplayFilter {
-		log.Infof("No operation - same pcap and filter.")
+		log.Info().Msgf("No operation - same pcap and filter.")
 		HandleError(NoneCode, app, fmt.Errorf("Same pcap and filter - nothing to do."), cb)
 	} else {
 
@@ -500,7 +502,7 @@ func (c *PacketLoader) LoadPcap(pcap string, displayFilter string, cb interface{
 			// call from main goroutine - when new filename is established
 			handleNewSource(NoneCode, app, cb)
 
-			log.Infof("Starting new pcap file load '%s'", pcap)
+			log.Info().Msgf("Starting new pcap file load '%s'", pcap)
 			c.loadPsmlSync(nil, c.ParentLoader, cb, app)
 		})
 	}
@@ -593,7 +595,7 @@ func (c *ParentLoader) loadPsmlForInterfaces(psrcs []IPacketSource, captureFilte
 
 	handleNewSource(NoneCode, app, cb)
 
-	log.Infof("Starting new interface/fifo load '%v'", SourcesString(psrcs))
+	log.Info().Msgf("Starting new interface/fifo load '%v'", SourcesString(psrcs))
 	c.PsmlLoader.loadPsmlSync(c.InterfaceLoader, c, cb, app)
 
 	return nil
@@ -716,13 +718,14 @@ func (r *tailReadTracker) Read(p []byte) (int, error) {
 }
 
 func errIsAlreadyClosed(err error) bool {
-	if err == os.ErrClosed {
+	if errors.Is(err, os.ErrClosed) {
 		return true
-	} else if err, ok := err.(*os.PathError); ok {
-		return errIsAlreadyClosed(err.Err)
-	} else {
-		return false
 	}
+	var target *os.PathError
+	if errors.As(err, &target) {
+		return errIsAlreadyClosed(target.Err)
+	}
+	return false
 }
 
 //======================================================================
@@ -877,7 +880,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 					if len(psmlData) > row {
 						sidx, err = strconv.Atoi(psmlData[row][0])
 						if err != nil {
-							log.Fatal(err)
+							log.Fatal().Err(err).Msg("error converting string to int 1")
 						}
 						if len(psmlData) > row+c.opt.PacketsPerLoad+1 {
 							// If we have enough packets to request one more than the amount to
@@ -886,12 +889,12 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 							// let me promptly kill tshark when I've read enough.
 							eidx, err = strconv.Atoi(psmlData[row+c.opt.PacketsPerLoad+1][0])
 							if err != nil {
-								log.Fatal(err)
+								log.Fatal().Err(err).Msg("error converting string to int 2")
 							}
 						} else {
 							eidx, err = strconv.Atoi(psmlData[len(psmlData)-1][0])
 							if err != nil {
-								log.Fatal(err)
+								log.Fatal().Err(err).Msg("error converting string to int 3")
 							}
 							eidx += 1 // beyond end of last frame
 							c.KillAfterReadingThisMany = len(psmlData) - row
@@ -947,14 +950,14 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 			killPcap := func() {
 				err := termshark.KillIfPossible(pcapCmd)
 				if err != nil {
-					log.Infof("Did not kill pcap process: %v", err)
+					log.Info().Msgf("Did not kill pcap process: %v", err)
 				}
 			}
 
 			killPdml := func() {
 				err = termshark.KillIfPossible(pdmlCmd)
 				if err != nil {
-					log.Infof("Did not kill pdml process: %v", err)
+					log.Info().Msgf("Did not kill pdml process: %v", err)
 				}
 			}
 
@@ -1085,7 +1088,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 				return
 			}
 
-			log.Infof("Started PDML command %v with pid %d", pdmlCmd, pdmlCmd.Pid())
+			log.Info().Msgf("Started PDML command %v with pid %d", pdmlCmd, pdmlCmd.Pid())
 
 			pid = pdmlCmd.Pid()
 			pdmlPidChan <- pid
@@ -1215,7 +1218,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 				return
 			}
 
-			log.Infof("Started pcap command %v with pid %d", pcapCmd, pcapCmd.Pid())
+			log.Info().Msgf("Started pcap command %v with pid %d", pcapCmd, pcapCmd.Pid())
 
 			pid = pcapCmd.Pid()
 			pcapPidChan <- pid
@@ -1393,14 +1396,15 @@ OuterLoop:
 // - if the source of packets is a fifo/interface then
 //   - create a pipe
 //   - set PcapPsml to a Reader object that tracks bytes read from the pipe
+//
 // - start the PSML tshark command and get its stdout
 // - if the source of packets is a fifo/interface then
 //   - use inotify to wait for the tmp pcap file to appear
 //   - start the tail command to read the tmp file created by the interface loader
+//
 // - read the PSML and add to data structures
 //
 // Goroutines are started to track the process lifetimes of both processes.
-//
 func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb interface{}, app gowid.IApp) {
 	// Used to cancel the tickers below which update list widgets with the latest data and
 	// update the progress meter. Note that if ctx is cancelled, then this context is cancelled
@@ -1541,7 +1545,7 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 			kill := func() {
 				err := termshark.KillIfPossible(psmlCmd)
 				if err != nil {
-					log.Infof("Did not kill tshark psml process: %v", err)
+					log.Info().Msgf("Did not kill tshark psml process: %v", err)
 				}
 
 				if p.ReadingFromFifo() {
@@ -1607,7 +1611,7 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 			return
 		}
 
-		log.Infof("Started PSML command %v with pid %d", p.PsmlCmd, p.PsmlCmd.Pid())
+		log.Info().Msgf("Started PSML command %v with pid %d", p.PsmlCmd, p.PsmlCmd.Pid())
 
 		// Do this here because code later can return early - e.g. the watcher fails to be
 		// set up - and then we'll never issue a Wait
@@ -1663,7 +1667,7 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 				kill := func() {
 					err := termshark.KillIfPossible(tailCmd)
 					if err != nil {
-						log.Infof("Did not kill tshark tail process: %v", err)
+						log.Info().Msgf("Did not kill tshark tail process: %v", err)
 					}
 				}
 
@@ -1723,7 +1727,7 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 				},
 			)
 
-			log.Infof("Starting Tail command: %v", p.tailCmd)
+			log.Info().Msgf("Starting Tail command: %v", p.tailCmd)
 
 			err = p.tailCmd.Start()
 			if err != nil {
@@ -1813,7 +1817,7 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 					// row with marks even if a filter is currently applied.
 					pidx, err = strconv.Atoi(curPsml[0])
 					if err != nil {
-						log.Fatal(err)
+						log.Fatal().Err(err).Msg("error converting string to int 5")
 					}
 					p.PacketNumberMap[pidx] = len(p.packetPsmlData)
 					p.PacketNumberOrder[ppidx] = pidx
@@ -2067,7 +2071,7 @@ func (i *InterfaceLoader) loadIfacesSync(e iIfaceLoaderEnv, cb interface{}, app 
 
 	i.ifaceCtx, i.ifaceCancelFn = context.WithCancel(e.Context())
 
-	log.Infof("Starting Iface command: %v", i.ifaceCmd)
+	log.Info().Msgf("Starting Iface command: %v", i.ifaceCmd)
 
 	pid := 0
 	ifacePidChan := make(chan int)
@@ -2092,7 +2096,7 @@ func (i *InterfaceLoader) loadIfacesSync(e iIfaceLoaderEnv, cb interface{}, app 
 
 	i.state = Loading
 
-	log.Infof("Started Iface command %v with pid %d", i.ifaceCmd, i.ifaceCmd.Pid())
+	log.Info().Msgf("Started Iface command %v with pid %d", i.ifaceCmd, i.ifaceCmd.Pid())
 
 	// Do this in a goroutine because the function is expected to return quickly
 	termshark.TrackedGo(func() {
@@ -2131,7 +2135,7 @@ func (i *InterfaceLoader) loadIfacesSync(e iIfaceLoaderEnv, cb interface{}, app 
 		killIface := func() {
 			err = termshark.KillIfPossible(i.ifaceCmd)
 			if err != nil {
-				log.Infof("Did not kill iface process: %v", err)
+				log.Info().Msgf("Did not kill iface process: %v", err)
 			}
 		}
 
@@ -2184,7 +2188,7 @@ func (i *InterfaceLoader) loadIfacesSync(e iIfaceLoaderEnv, cb interface{}, app 
 		fi, err := os.Stat(e.InterfaceFile())
 		i.Lock()
 		if err != nil {
-			log.Warn(err)
+			log.Warn().Err(err).Msg("error stat file")
 			// Deliberately not a fatal error - it can happen if the source of packets to tshark -i
 			// is corrupt, resulting in a tshark error. Setting zero here will line up with the
 			// reading end which will read zero, and so terminate the tshark -T psml procedure.

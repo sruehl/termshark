@@ -13,15 +13,15 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gcla/termshark/v2"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+
+	"github.com/sruehl/termshark/v2"
 )
 
 //======================================================================
 
 type FieldType uint
 
-//
 // from epan/ftypes/ftypes.h
 //
 // enum ftenum {
@@ -182,10 +182,10 @@ func (w *TSharkFields) Init() error {
 		err = termshark.ReadGob(termshark.CacheFile("tsharkfieldsv3.gob.gz"), f)
 		if err == nil {
 			w.ser = f
-			log.Infof("Read cached tshark fields.")
+			log.Info().Msgf("Read cached tshark fields.")
 			return nil
 		} else {
-			log.Infof("Could not read cached tshark fields (%v) - regenerating...", err)
+			log.Info().Msgf("Could not read cached tshark fields (%v) - regenerating...", err)
 		}
 	}
 
@@ -309,7 +309,7 @@ func (t *TSharkFields) Completions(prefix string, cb IPrefixCompleterCallback) {
 	})
 
 	if err != nil {
-		log.Warnf("Field completion error: %v", err)
+		log.Warn().Msgf("Field completion error: %v", err)
 	}
 
 	// might be nil if I am still loading from tshark -G

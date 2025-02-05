@@ -10,12 +10,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/table"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
 )
 
 //======================================================================
@@ -108,14 +109,14 @@ func (t updatePacketViews) AfterEnd(code pcap.HandlerCode, app gowid.IApp) {
 	updatePacketListWithData(t.Ld, app)
 	StopEmptyStructViewTimer()
 	StopEmptyHexViewTimer()
-	log.Infof("Load operation complete")
+	log.Info().Msgf("Load operation complete")
 }
 
 func (t updatePacketViews) OnError(code pcap.HandlerCode, app gowid.IApp, err error) {
 	if code&pcap.PsmlCode == 0 {
 		return
 	}
-	log.Error(err)
+	log.Error().Err(err).Msg("OnError")
 	if !Running {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		RequestQuit()
@@ -145,7 +146,7 @@ func (t SimpleErrors) OnError(code pcap.HandlerCode, app gowid.IApp, err error) 
 	if code&pcap.NoneCode == 0 {
 		return
 	}
-	log.Error(err)
+	log.Error().Err(err).Msg("OnError")
 	// Hack to avoid picking up errors at other parts of the load
 	// cycle. There should be specific handlers for specific errors.
 	if !profiles.ConfBool("main.suppress-tshark-errors", true) {
@@ -363,7 +364,7 @@ func (s SetStructWidgets) OnError(code pcap.HandlerCode, app gowid.IApp, err err
 	if code&pcap.PdmlCode == 0 {
 		return
 	}
-	log.Error(err)
+	log.Error().Err(err).Msg("OnError")
 	// Hack to avoid picking up errors at other parts of the load
 	// cycle. There should be specific handlers for specific errors.
 	if s.Ld.PdmlLoader.IsLoading() {

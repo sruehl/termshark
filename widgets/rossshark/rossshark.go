@@ -11,8 +11,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
 )
 
 //======================================================================

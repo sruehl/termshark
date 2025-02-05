@@ -8,7 +8,7 @@ package ui
 import (
 	"sync"
 
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

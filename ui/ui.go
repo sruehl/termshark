@@ -18,64 +18,65 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gcla/deep"
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/clicktracker"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/dialog"
-	"github.com/gcla/gowid/widgets/disable"
-	"github.com/gcla/gowid/widgets/divider"
-	"github.com/gcla/gowid/widgets/fill"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/isselected"
-	"github.com/gcla/gowid/widgets/list"
-	"github.com/gcla/gowid/widgets/menu"
-	"github.com/gcla/gowid/widgets/null"
-	"github.com/gcla/gowid/widgets/overlay"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/progress"
-	"github.com/gcla/gowid/widgets/selectable"
-	"github.com/gcla/gowid/widgets/spinner"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/gowid/widgets/tree"
-	"github.com/gcla/gowid/widgets/vpadding"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/fields"
-	"github.com/gcla/termshark/v2/pkg/noroot"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	"github.com/gcla/termshark/v2/pkg/pdmltree"
-	"github.com/gcla/termshark/v2/pkg/psmlmodel"
-	"github.com/gcla/termshark/v2/pkg/shark"
-	"github.com/gcla/termshark/v2/pkg/system"
-	"github.com/gcla/termshark/v2/pkg/theme"
-	"github.com/gcla/termshark/v2/ui/menuutil"
-	"github.com/gcla/termshark/v2/ui/tableutil"
-	"github.com/gcla/termshark/v2/widgets"
-	"github.com/gcla/termshark/v2/widgets/appkeys"
-	"github.com/gcla/termshark/v2/widgets/copymodetree"
-	"github.com/gcla/termshark/v2/widgets/enableselected"
-	"github.com/gcla/termshark/v2/widgets/expander"
-	"github.com/gcla/termshark/v2/widgets/filter"
-	"github.com/gcla/termshark/v2/widgets/hexdumper2"
-	"github.com/gcla/termshark/v2/widgets/ifwidget"
-	"github.com/gcla/termshark/v2/widgets/mapkeys"
-	"github.com/gcla/termshark/v2/widgets/minibuffer"
-	"github.com/gcla/termshark/v2/widgets/resizable"
-	"github.com/gcla/termshark/v2/widgets/rossshark"
-	"github.com/gcla/termshark/v2/widgets/search"
-	"github.com/gcla/termshark/v2/widgets/withscrollbar"
 	"github.com/gdamore/tcell/v2"
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
+	"github.com/sruehl/deep"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/clicktracker"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/dialog"
+	"github.com/sruehl/gowid/widgets/disable"
+	"github.com/sruehl/gowid/widgets/divider"
+	"github.com/sruehl/gowid/widgets/fill"
+	"github.com/sruehl/gowid/widgets/framed"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/isselected"
+	"github.com/sruehl/gowid/widgets/list"
+	"github.com/sruehl/gowid/widgets/menu"
+	"github.com/sruehl/gowid/widgets/null"
+	"github.com/sruehl/gowid/widgets/overlay"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/progress"
+	"github.com/sruehl/gowid/widgets/selectable"
+	"github.com/sruehl/gowid/widgets/spinner"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/table"
+	"github.com/sruehl/gowid/widgets/text"
+	"github.com/sruehl/gowid/widgets/tree"
+	"github.com/sruehl/gowid/widgets/vpadding"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/fields"
+	"github.com/sruehl/termshark/v2/pkg/noroot"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
+	"github.com/sruehl/termshark/v2/pkg/pdmltree"
+	"github.com/sruehl/termshark/v2/pkg/psmlmodel"
+	"github.com/sruehl/termshark/v2/pkg/shark"
+	"github.com/sruehl/termshark/v2/pkg/system"
+	"github.com/sruehl/termshark/v2/pkg/theme"
+	"github.com/sruehl/termshark/v2/ui/menuutil"
+	"github.com/sruehl/termshark/v2/ui/tableutil"
+	"github.com/sruehl/termshark/v2/widgets"
+	"github.com/sruehl/termshark/v2/widgets/appkeys"
+	"github.com/sruehl/termshark/v2/widgets/copymodetree"
+	"github.com/sruehl/termshark/v2/widgets/enableselected"
+	"github.com/sruehl/termshark/v2/widgets/expander"
+	"github.com/sruehl/termshark/v2/widgets/filter"
+	"github.com/sruehl/termshark/v2/widgets/hexdumper2"
+	"github.com/sruehl/termshark/v2/widgets/ifwidget"
+	"github.com/sruehl/termshark/v2/widgets/mapkeys"
+	"github.com/sruehl/termshark/v2/widgets/minibuffer"
+	"github.com/sruehl/termshark/v2/widgets/resizable"
+	"github.com/sruehl/termshark/v2/widgets/rossshark"
+	"github.com/sruehl/termshark/v2/widgets/search"
+	"github.com/sruehl/termshark/v2/widgets/withscrollbar"
 )
 
 //======================================================================
@@ -198,12 +199,11 @@ var packetListView *psmlTableRowWidget
 // hex to struct to happen once. So this is a workaround to allow it in that case.
 //
 // This variable has two effects:
-// - when the hex widget is positioned programmatically, and focus is not on the hex widget,
-//   the struct widget is nevertheless updated accordingly
-// - but when the struct widget is updated, if the innermost layer does not capture the
-//   current hex location (the search destination), DON'T update the hex position to be
-//   inside the PDML's innermost layer, which maybe somewhere else in the packet.
-//
+//   - when the hex widget is positioned programmatically, and focus is not on the hex widget,
+//     the struct widget is nevertheless updated accordingly
+//   - but when the struct widget is updated, if the innermost layer does not capture the
+//     current hex location (the search destination), DON'T update the hex position to be
+//     inside the PDML's innermost layer, which maybe somewhere else in the packet.
 var allowHexToStructRepositioning bool
 
 var filterWithSearch gowid.IWidget
@@ -321,14 +321,12 @@ func (o *MultiMenuOpener) CloseMenu(mnu *menu.Widget, app gowid.IApp) {
 
 //======================================================================
 
-//
 // Handle examples like
 // .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
 // Extract just
 // LG bit
 //
 // I'm trying to copy what Wireshark does, more or less
-//
 func columnNameFromShowname(showname string) string {
 	matches := shownameRe.FindStringSubmatch(showname)
 	if len(matches) >= 3 {
@@ -391,7 +389,7 @@ func makePdmlFilterMenu(filter string, val string) *menu.Widget {
 	openPdmlFilterMenu2 := func(prep bool, w gowid.IWidget, app gowid.IApp) {
 		st, ok := sites[w]
 		if !ok {
-			log.Warnf("Unexpected application state: missing menu site for %v", w)
+			log.Warn().Msgf("Unexpected application state: missing menu site for %v", w)
 			return
 		}
 
@@ -1354,7 +1352,7 @@ func askToSave(app gowid.IApp, next callWithAppFn) {
 							WriteToDeleted = true
 							err := os.Remove(Loader.InterfaceFile())
 							if err != nil {
-								log.Errorf("Could not delete file %s: %v", Loader.InterfaceFile(), err)
+								log.Error().Msgf("Could not delete file %s: %v", Loader.InterfaceFile(), err)
 							}
 							keepPackets.Close(app)
 							next(app)
@@ -1531,7 +1529,7 @@ func getCurrentStructModelWith(row int, lock sync.Locker) *pdmltree.Model {
 		if len(srca) > row%pktsPerLoad {
 			data, err := xml.Marshal(srca[row%pktsPerLoad].Packet())
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal().Err(err).Msg("error marshaling")
 			}
 
 			res = pdmltree.DecodePacket(data)
@@ -3038,7 +3036,7 @@ func RequestNewFilter(displayFilter string, app gowid.IApp) {
 	}
 
 	if Loader.DisplayFilter() == displayFilter {
-		log.Infof("No operation - same filter applied ('%s').", displayFilter)
+		log.Info().Msgf("No operation - same filter applied ('%s').", displayFilter)
 	} else {
 		Loader.Reload(displayFilter, handlers, app)
 	}
@@ -3291,7 +3289,7 @@ func ApplyCurrentTheme(app gowid.IApp) {
 	if themeName != "" {
 		err = theme.Load(themeName, app)
 		if err != nil {
-			log.Warnf("Theme %s could not be loaded: %v", themeName, err)
+			log.Warn().Msgf("Theme %s could not be loaded: %v", themeName, err)
 		} else {
 			loaded = true
 		}
@@ -3299,7 +3297,7 @@ func ApplyCurrentTheme(app gowid.IApp) {
 	if !loaded && themeName != "default" {
 		err = theme.Load("default", app)
 		if err != nil {
-			log.Warnf("Theme %s could not be loaded: %v", themeName, err)
+			log.Warn().Msgf("Theme %s could not be loaded: %v", themeName, err)
 		}
 	}
 }
@@ -4359,20 +4357,20 @@ func Build(tty string) (*gowid.App, error) {
 	keyMapper = mapkeys.New(lastMenu)
 	keyMappings := termshark.LoadKeyMappings()
 	for _, km := range keyMappings {
-		log.Infof("Applying keymapping %v --> %v", km.From, km.To)
+		log.Info().Msgf("Applying keymapping %v --> %v", km.From, km.To)
 		keyMapper.AddMapping(km.From, km.To, app)
 	}
 
 	if err = termshark.LoadGlobalMarks(globalMarksMap); err != nil {
 		// Not fatal
-		log.Error(err)
+		log.Error().Err(err).Msg("error loading")
 	}
 
 	// Create app, etc, but don't init screen which sets ICANON, etc
 	app, err = gowid.NewApp(gowid.AppArgs{
 		View:                 keyMapper,
 		Palette:              palette,
-		Log:                  log.StandardLogger(),
+		Log:                  &log.Logger,
 		EnableBracketedPaste: true,
 		DontActivate:         true,
 		Tty:                  tty,

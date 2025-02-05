@@ -4,7 +4,7 @@
 
 package pcap
 
-import "github.com/gcla/gowid"
+import "github.com/sruehl/gowid"
 
 //======================================================================
 

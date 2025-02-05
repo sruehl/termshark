@@ -8,9 +8,10 @@ package ui
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2/pkg/theme"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+
+	"github.com/sruehl/termshark/v2/pkg/theme"
 )
 
 //======================================================================
@@ -142,7 +143,7 @@ func tomlCol(key string, layer theme.Layer, hue string) gowid.IColor {
 		// color can't be resolved. When this is called, we should always have a
 		// theme loaded because we fall back to the "default" theme if no other is
 		// specified.
-		log.Warnf("Could not understand configured theme color '%s'", key)
+		log.Warn().Msgf("Could not understand configured theme color '%s'", key)
 	}
 
 	return gowid.ColorBlack

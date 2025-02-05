@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

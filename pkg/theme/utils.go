@@ -12,13 +12,13 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/gcla/gowid"
 	"github.com/rakyll/statik/fs"
+	log "github.com/rs/zerolog/log"
 	"github.com/shibukawa/configdir"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/sruehl/gowid"
 
-	_ "github.com/gcla/termshark/v2/assets/statik"
+	_ "github.com/sruehl/termshark/v2/assets/statik"
 )
 
 //======================================================================
@@ -105,7 +105,7 @@ func Load(name string, app gowid.IApp) error {
 
 	mode := Mode(app.GetColorMode()).String()
 
-	log.Infof("Loading theme %s in terminal mode %v", name, app.GetColorMode())
+	log.Info().Msgf("Loading theme %s in terminal mode %v", name, app.GetColorMode())
 
 	// If there's not a truecolor theme, we assume the user wants the best alternative to be loaded,
 	// and if a terminal has truecolor support, it'll surely have 256-color support.
@@ -117,12 +117,12 @@ func Load(name string, app gowid.IApp) error {
 	for _, m := range modes {
 		// Prefer to load from disk
 		themeFileName := filepath.Join(dirs[0].Path, "themes", fmt.Sprintf("%s-%s.toml", name, m))
-		log.Infof("Trying to load user theme %s", themeFileName)
+		log.Info().Msgf("Trying to load user theme %s", themeFileName)
 		var file io.ReadCloser
 		file, err = os.Open(themeFileName)
 		if err == nil {
 			defer file.Close()
-			log.Infof("Loaded user theme %s", themeFileName)
+			log.Info().Msgf("Loaded user theme %s", themeFileName)
 			return theme.ReadConfig(file)
 		}
 	}
@@ -135,12 +135,12 @@ func Load(name string, app gowid.IApp) error {
 
 	for _, m := range modes {
 		themeFileName := path.Join("/themes", fmt.Sprintf("%s-%s.toml", name, m))
-		log.Infof("Trying to load built-in theme %s", themeFileName)
+		log.Info().Msgf("Trying to load built-in theme %s", themeFileName)
 		var file io.ReadCloser
 		file, err = statikFS.Open(themeFileName)
 		if err == nil {
 			defer file.Close()
-			log.Infof("Loaded built-in theme %s", themeFileName)
+			log.Info().Msgf("Loaded built-in theme %s", themeFileName)
 			return theme.ReadConfig(file)
 		}
 	}

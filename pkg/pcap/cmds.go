@@ -12,11 +12,12 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/summary"
-	"github.com/gcla/termshark/v2/pkg/shark"
 	"github.com/kballard/go-shellquote"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/shark"
+	"github.com/sruehl/termshark/v2/pkg/summary"
 )
 
 //======================================================================

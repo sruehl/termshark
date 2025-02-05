@@ -5,7 +5,7 @@
 // Package keepselected turns on the selected bit when Render or UserInput is called.
 package keepselected
 
-import "github.com/gcla/gowid"
+import "github.com/sruehl/gowid"
 
 // A widget to ensure that its subwidget is always rendered as "selected", even if it's
 // not in focus. This allows a composite widget to style its selected child even without

@@ -8,12 +8,13 @@ package ui
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/dialog"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/widgets/wormhole"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/dialog"
+	"github.com/sruehl/gowid/widgets/framed"
+
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/widgets/wormhole"
 )
 
 //======================================================================
@@ -34,7 +35,7 @@ func openWormhole(app gowid.IApp) {
 		CurrentWormholeWidget, err = wormhole.New(Loader.PcapPdml, app, wormhole.Options{
 			ErrorHandler: func(err error, app gowid.IApp) {
 				msg := fmt.Sprintf("Problem sending pcap: %v", err)
-				log.Error(msg)
+				log.Error().Err(err).Msg(msg)
 				OpenError(msg, app)
 			},
 			CodeLength:          numWords,
@@ -43,7 +44,7 @@ func openWormhole(app gowid.IApp) {
 		})
 		if err != nil {
 			msg := fmt.Sprintf("%v", err)
-			log.Error(msg)
+			log.Error().Err(err).Msg(msg)
 			OpenError(msg, app)
 			return
 		}

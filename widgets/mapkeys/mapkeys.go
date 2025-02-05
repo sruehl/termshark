@@ -10,9 +10,9 @@
 package mapkeys
 
 import (
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/vim"
 	"github.com/gdamore/tcell/v2"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/vim"
 )
 
 //======================================================================

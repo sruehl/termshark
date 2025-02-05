@@ -11,22 +11,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/menu"
-	"github.com/gcla/gowid/widgets/null"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	"github.com/gcla/termshark/v2/pkg/pdmltree"
-	"github.com/gcla/termshark/v2/pkg/streams"
-	"github.com/gcla/termshark/v2/widgets/appkeys"
-	"github.com/gcla/termshark/v2/widgets/streamwidget"
 	"github.com/gdamore/tcell/v2"
 	lru "github.com/hashicorp/golang-lru"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/menu"
+	"github.com/sruehl/gowid/widgets/null"
+	"github.com/sruehl/gowid/widgets/table"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
+	"github.com/sruehl/termshark/v2/pkg/pdmltree"
+	"github.com/sruehl/termshark/v2/pkg/streams"
+	"github.com/sruehl/termshark/v2/widgets/appkeys"
+	"github.com/sruehl/termshark/v2/widgets/streamwidget"
 )
 
 var streamViewNoKeysHolder *holder.Widget
@@ -335,7 +336,7 @@ func (t *streamParseHandler) OnError(code pcap.HandlerCode, app gowid.IApp, err 
 	if code&pcap.StreamCode == 0 {
 		return
 	}
-	log.Error(err)
+	log.Error().Err(err).Msg("OnError")
 	if !Running {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		RequestQuit()
@@ -359,10 +360,10 @@ func initStreamWidgetCache() {
 	var err error
 	streamWidgets, err = lru.New(widgetCacheSize)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("initStreamWidgetCache")
 	}
 
-	log.Infof("Initialized stream widget cache with %d entries.", widgetCacheSize)
+	log.Info().Msgf("Initialized stream widget cache with %d entries.", widgetCacheSize)
 }
 
 func clearStreamState() {

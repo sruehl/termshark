@@ -2,7 +2,7 @@
 // code is governed by the MIT license that can be found in the LICENSE
 // file.
 
-// +build !windows
+//go:build !windows
 
 // Package fileviewer provides a widget to view a text file in a terminal
 // via a pager program.
@@ -11,12 +11,12 @@ package fileviewer
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/null"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/terminal"
-	"github.com/gcla/gowid/widgets/text"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/null"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/terminal"
+	"github.com/sruehl/gowid/widgets/text"
 )
 
 //======================================================================

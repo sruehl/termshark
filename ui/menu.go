@@ -8,21 +8,22 @@ package ui
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/cellmod"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/divider"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/keypress"
-	"github.com/gcla/gowid/widgets/menu"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/selectable"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/termshark/v2/widgets/appkeys"
 	"github.com/gdamore/tcell/v2"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/cellmod"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/divider"
+	"github.com/sruehl/gowid/widgets/framed"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/keypress"
+	"github.com/sruehl/gowid/widgets/menu"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/selectable"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/text"
+
+	"github.com/sruehl/termshark/v2/widgets/appkeys"
 )
 
 //======================================================================

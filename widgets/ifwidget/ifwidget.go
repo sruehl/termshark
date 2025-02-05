@@ -9,7 +9,7 @@ package ifwidget
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

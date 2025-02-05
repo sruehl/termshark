@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwtest"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/list"
-	"github.com/gcla/gowid/widgets/text"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwtest"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/list"
+	"github.com/sruehl/gowid/widgets/text"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -7,9 +7,10 @@
 package scrollabletable
 
 import (
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2/widgets/withscrollbar"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/table"
+
+	"github.com/sruehl/termshark/v2/widgets/withscrollbar"
 )
 
 //======================================================================

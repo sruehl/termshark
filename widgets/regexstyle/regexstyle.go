@@ -11,8 +11,8 @@ package regexstyle
 import (
 	"regexp"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/text"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/text"
 )
 
 //======================================================================

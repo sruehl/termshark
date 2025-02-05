@@ -10,8 +10,9 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/gcla/termshark/v2/pkg/format"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/sruehl/termshark/v2/pkg/format"
 )
 
 //======================================================================

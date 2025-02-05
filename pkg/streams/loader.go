@@ -13,10 +13,11 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
 )
 
 //======================================================================
@@ -144,7 +145,7 @@ func (c *Loader) loadStreamReassemblyAsync(pcapf string, proto string, idx int, 
 		kill := func() {
 			err := termshark.KillIfPossible(origCmd)
 			if err != nil {
-				log.Infof("Did not kill tshark stream process: %v", err)
+				log.Info().Msgf("Did not kill tshark stream process: %v", err)
 			}
 		}
 
@@ -203,7 +204,7 @@ func (c *Loader) loadStreamReassemblyAsync(pcapf string, proto string, idx int, 
 		return
 	}
 
-	log.Infof("Started stream reassembly command %v with pid %d", c.streamCmd, c.streamCmd.Pid())
+	log.Info().Msgf("Started stream reassembly command %v with pid %d", c.streamCmd, c.streamCmd.Pid())
 
 	defer func() {
 		termChan <- c.streamCmd.Wait()
@@ -219,7 +220,7 @@ func (c *Loader) loadStreamReassemblyAsync(pcapf string, proto string, idx int, 
 	func() {
 		_, err := ParseReader("", streamOut, ops...)
 		if err != nil {
-			log.Warnf("Stream parser reported error: %v", err)
+			log.Warn().Msgf("Stream parser reported error: %v", err)
 		}
 	}()
 
@@ -259,7 +260,7 @@ func (c *Loader) startStreamIndexerAsync(pcapf string, proto string, idx int, ap
 		kill := func() {
 			err = termshark.KillIfPossible(c.indexerCmd)
 			if err != nil {
-				log.Infof("Did not kill indexer process: %v", err)
+				log.Info().Msgf("Did not kill indexer process: %v", err)
 			}
 		}
 
@@ -310,7 +311,7 @@ func (c *Loader) startStreamIndexerAsync(pcapf string, proto string, idx int, ap
 		return
 	}
 
-	log.Infof("Started stream indexer command %v with pid %d", c.indexerCmd, c.indexerCmd.Pid())
+	log.Info().Msgf("Started stream indexer command %v with pid %d", c.indexerCmd, c.indexerCmd.Pid())
 
 	defer func() {
 		procWaitChan <- c.indexerCmd.Wait()

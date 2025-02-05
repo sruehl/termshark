@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

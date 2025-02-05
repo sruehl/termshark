@@ -7,7 +7,7 @@
 package modeswap
 
 import (
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

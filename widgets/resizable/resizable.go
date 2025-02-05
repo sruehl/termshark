@@ -6,9 +6,9 @@
 package resizable
 
 import (
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/pile"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/pile"
 )
 
 //======================================================================

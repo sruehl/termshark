@@ -9,10 +9,10 @@ package framefocus
 import (
 	"runtime"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/isselected"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/framed"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/isselected"
 )
 
 //======================================================================

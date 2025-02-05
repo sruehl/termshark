@@ -12,18 +12,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/vim"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/theme"
-	"github.com/gcla/termshark/v2/widgets/mapkeys"
-	"github.com/gcla/termshark/v2/widgets/minibuffer"
 	"github.com/rakyll/statik/fs"
 	"github.com/shibukawa/configdir"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/vim"
 
-	_ "github.com/gcla/termshark/v2/assets/statik"
+	"github.com/sruehl/termshark/v2"
+	_ "github.com/sruehl/termshark/v2/assets/statik"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/theme"
+	"github.com/sruehl/termshark/v2/widgets/mapkeys"
+	"github.com/sruehl/termshark/v2/widgets/minibuffer"
 )
 
 //======================================================================

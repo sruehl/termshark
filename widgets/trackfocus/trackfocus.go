@@ -6,7 +6,7 @@
 package trackfocus
 
 import (
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

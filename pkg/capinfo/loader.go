@@ -11,10 +11,11 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
 )
 
 //======================================================================
@@ -111,7 +112,7 @@ func (c *Loader) loadCapinfoAsync(pcapf string, app gowid.IApp, cb ICapinfoCallb
 		kill := func() {
 			err := termshark.KillIfPossible(cmd)
 			if err != nil {
-				log.Infof("Did not kill tshark capinfos process: %v", err)
+				log.Info().Msgf("Did not kill tshark capinfos process: %v", err)
 			}
 		}
 
@@ -174,7 +175,7 @@ func (c *Loader) loadCapinfoAsync(pcapf string, app gowid.IApp, cb ICapinfoCallb
 		return
 	}
 
-	log.Infof("Started capinfo command %v with pid %d", c.capinfoCmd, c.capinfoCmd.Pid())
+	log.Info().Msgf("Started capinfo command %v with pid %d", c.capinfoCmd, c.capinfoCmd.Pid())
 
 	termshark.TrackedGo(func() {
 		termChan <- c.capinfoCmd.Wait()

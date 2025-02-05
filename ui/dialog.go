@@ -8,21 +8,22 @@ package ui
 import (
 	"strings"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/dialog"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/paragraph"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/selectable"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/widgets/appkeys"
-	"github.com/gcla/termshark/v2/widgets/framefocus"
-	"github.com/gcla/termshark/v2/widgets/minibuffer"
-	"github.com/gcla/termshark/v2/widgets/scrollabletext"
-	"github.com/gcla/termshark/v2/widgets/withscrollbar"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/dialog"
+	"github.com/sruehl/gowid/widgets/framed"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/paragraph"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/selectable"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/text"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/widgets/appkeys"
+	"github.com/sruehl/termshark/v2/widgets/framefocus"
+	"github.com/sruehl/termshark/v2/widgets/minibuffer"
+	"github.com/sruehl/termshark/v2/widgets/scrollabletext"
+	"github.com/sruehl/termshark/v2/widgets/withscrollbar"
 )
 
 //======================================================================

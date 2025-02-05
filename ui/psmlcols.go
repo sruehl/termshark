@@ -10,27 +10,28 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/clicktracker"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/dialog"
-	"github.com/gcla/gowid/widgets/divider"
-	"github.com/gcla/gowid/widgets/framed"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/hpadding"
-	"github.com/gcla/gowid/widgets/menu"
-	"github.com/gcla/gowid/widgets/null"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/shark"
-	"github.com/gcla/termshark/v2/pkg/shark/wiresharkcfg"
-	"github.com/gcla/termshark/v2/ui/menuutil"
 	"github.com/gdamore/tcell/v2"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/clicktracker"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/dialog"
+	"github.com/sruehl/gowid/widgets/divider"
+	"github.com/sruehl/gowid/widgets/framed"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/hpadding"
+	"github.com/sruehl/gowid/widgets/menu"
+	"github.com/sruehl/gowid/widgets/null"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/table"
+	"github.com/sruehl/gowid/widgets/text"
+
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/shark"
+	"github.com/sruehl/termshark/v2/pkg/shark/wiresharkcfg"
+	"github.com/sruehl/termshark/v2/ui/menuutil"
 )
 
 //======================================================================
@@ -341,7 +342,7 @@ func openEditColumns(app gowid.IApp) {
 			CurrentColsWidget = nil
 			err := pcols.Close()
 			if err != nil {
-				log.Warnf("Unexpected result closing PSML columns dialog: %v", err)
+				log.Warn().Msgf("Unexpected result closing PSML columns dialog: %v", err)
 			}
 
 		}

@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/rs/zerolog"
 	"io"
 	"io/ioutil"
 	"net"
@@ -31,23 +32,23 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/adam-hanna/arrayOperations"
 	"github.com/blang/semver"
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/vim"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/system"
-	"github.com/gcla/termshark/v2/widgets/resizable"
 	"github.com/gdamore/tcell/v2"
 	"github.com/gdamore/tcell/v2/terminfo"
 	"github.com/gdamore/tcell/v2/terminfo/dynamic"
 	"github.com/mattn/go-isatty"
 	"github.com/pkg/errors"
+	log "github.com/rs/zerolog/log"
 	"github.com/shibukawa/configdir"
-	log "github.com/sirupsen/logrus"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/vim"
+	"github.com/sruehl/gowid/widgets/table"
 	"github.com/tevino/abool"
+
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/system"
+	"github.com/sruehl/termshark/v2/widgets/resizable"
 )
 
 //======================================================================
@@ -103,8 +104,8 @@ var InternalErr = InternalError{}
 var (
 	UserGuideURL         string = "https://termshark.io/userguide"
 	FAQURL               string = "https://termshark.io/faq"
-	BugURL               string = "https://github.com/gcla/termshark/issues/new?assignees=&labels=&template=bug_report.md&title="
-	FeatureURL           string = "https://github.com/gcla/termshark/issues/new?assignees=&labels=&template=feature_request.md&title="
+	BugURL               string = "https://github.com/sruehl/termshark/issues/new?assignees=&labels=&template=bug_report.md&title="
+	FeatureURL           string = "https://github.com/sruehl/termshark/issues/new?assignees=&labels=&template=feature_request.md&title="
 	OriginalEnv          []string
 	ShouldSwitchTerminal bool
 	ShouldSwitchBack     bool
@@ -390,17 +391,17 @@ func LoadKeyMappings() []KeyMapping {
 	for _, mapping := range mappings {
 		pair := strings.Split(mapping, " ")
 		if len(pair) != 2 {
-			log.Warnf("Could not parse vim key mapping (missing separator?): %s", mapping)
+			log.Warn().Msgf("Could not parse vim key mapping (missing separator?): %s", mapping)
 			continue
 		}
 		from := vim.VimStringToKeys(pair[0])
 		if len(from) != 1 {
-			log.Warnf("Could not parse 'source' vim keypress: %s", pair[0])
+			log.Warn().Msgf("Could not parse 'source' vim keypress: %s", pair[0])
 			continue
 		}
 		to := vim.VimStringToKeys(pair[1])
 		if len(to) < 1 {
-			log.Warnf("Could not parse 'target' vim keypresses: %s", pair[1])
+			log.Warn().Msgf("Could not parse 'target' vim keypresses: %s", pair[1])
 			continue
 		}
 		res = append(res, KeyMapping{From: from[0], To: to})
@@ -512,7 +513,7 @@ func StringInSlice(a string, list []string) bool {
 func TemplateToString(tmpl *template.Template, name string, data interface{}) string {
 	var res bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&res, name, data); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("error executing template")
 	}
 
 	return res.String()
@@ -600,12 +601,9 @@ func ConvTypes() []string {
 	defs := []string{"eth", "ip", "ipv6", "tcp", "udp"}
 	ctypes := profiles.ConfStrings("main.conv-types")
 	if len(ctypes) > 0 {
-		z, ok := arrayOperations.Intersect(defs, ctypes)
+		z, ok := Intersection(defs, ctypes)
 		if ok {
-			res, ok := z.Interface().([]string)
-			if ok {
-				return res
-			}
+			return z
 		}
 	}
 	return defs
@@ -668,7 +666,7 @@ func SaveOffsetToConfig(name string, offsets2 []resizable.Offset) {
 	} else {
 		offs, err := json.Marshal(offsets)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("could not marshal offsets")
 		}
 		profiles.SetConf("main."+name, string(offs))
 	}
@@ -679,8 +677,26 @@ func SaveOffsetToConfig(name string, offsets2 []resizable.Offset) {
 //======================================================================
 
 func ErrLogger(key string, val string) *io.PipeWriter {
-	l := log.StandardLogger()
-	return log.NewEntry(l).WithField(key, val).WriterLevel(log.ErrorLevel)
+	cw := customWriter{log.Logger.With().Str(key, val).Logger()}
+
+	r, w := io.Pipe()
+	go func() {
+		_, err := io.Copy(cw, r)
+		if err != nil {
+			log.Fatal().Err(err).Msg("copy failed")
+		}
+	}()
+
+	return w
+}
+
+type customWriter struct {
+	zerolog.Logger
+}
+
+func (c customWriter) Write(p []byte) (n int, err error) {
+	c.Error().Msg(string(p))
+	return len(p), nil
 }
 
 // KeyValueErrorString returns a string representation of
@@ -756,7 +772,7 @@ func SaveGlobalMarks(m map[rune]GlobalJumpPos) {
 	} else {
 		marksJ, err := json.Marshal(marks)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("could not marshal marks")
 		}
 		profiles.SetConf("main.marks", string(marksJ))
 	}
@@ -879,7 +895,7 @@ func PrunePcapCache() error {
 	var diskCacheSize int64 = int64(profiles.ConfInt("main.disk-cache-size-mb", -1))
 
 	if diskCacheSize == -1 {
-		log.Infof("No pcap disk cache size set. Skipping cache pruning.")
+		log.Info().Msgf("No pcap disk cache size set. Skipping cache pruning.")
 		return nil
 	}
 
@@ -887,7 +903,7 @@ func PrunePcapCache() error {
 	// bytes for comparing to file sizes.
 	diskCacheSize = diskCacheSize * 1024 * 1024
 
-	log.Infof("Pruning termshark's pcap disk cache at %s...", PcapDir())
+	log.Info().Msgf("Pruning termshark's pcap disk cache at %s...", PcapDir())
 
 	var totalSize int64
 	var fileInfos []os.FileInfo
@@ -913,7 +929,7 @@ func PrunePcapCache() error {
 	for len(fileInfos) > 0 && curCacheSize > diskCacheSize {
 		err = os.Remove(filepath.Join(PcapDir(), fileInfos[0].Name()))
 		if err != nil {
-			log.Warnf("Could not remove pcap cache file %s while pruning - %v", fileInfos[0].Name(), err)
+			log.Warn().Msgf("Could not remove pcap cache file %s while pruning - %v", fileInfos[0].Name(), err)
 		} else {
 			curCacheSize = curCacheSize - fileInfos[0].Size()
 			filesRemoved++
@@ -922,10 +938,10 @@ func PrunePcapCache() error {
 	}
 
 	if filesRemoved > 0 {
-		log.Infof("Pruning complete. Removed %d old pcaps. Cache size is now %d MB",
+		log.Info().Msgf("Pruning complete. Removed %d old pcaps. Cache size is now %d MB",
 			filesRemoved, curCacheSize/(1024*1024))
 	} else {
-		log.Infof("Pruning complete. No old pcaps removed. Cache size is %d MB",
+		log.Info().Msgf("Pruning complete. No old pcaps removed. Cache size is %d MB",
 			curCacheSize/(1024*1024))
 	}
 
@@ -947,15 +963,15 @@ func DateStringForFilename() string {
 
 func ProfileCPUFor(secs int) bool {
 	if !cpuProfileRunning.SetToIf(false, true) {
-		log.Infof("CPU profile already running.")
+		log.Info().Msgf("CPU profile already running.")
 		return false
 	}
 	file := filepath.Join(CacheDir(), fmt.Sprintf("cpu-%s.prof", DateStringForFilename()))
-	log.Infof("Starting CPU profile for %d seconds in %s", secs, file)
+	log.Info().Msgf("Starting CPU profile for %d seconds in %s", secs, file)
 	gwutil.StartProfilingCPU(file)
 	go func() {
 		time.Sleep(time.Duration(secs) * time.Second)
-		log.Infof("Stopping CPU profile")
+		log.Info().Msgf("Stopping CPU profile")
 		gwutil.StopProfilingCPU()
 		cpuProfileRunning.UnSet()
 	}()
@@ -965,7 +981,7 @@ func ProfileCPUFor(secs int) bool {
 
 func ProfileHeap() {
 	file := filepath.Join(CacheDir(), fmt.Sprintf("mem-%s.prof", DateStringForFilename()))
-	log.Infof("Creating memory profile in %s", file)
+	log.Info().Msgf("Creating memory profile in %s", file)
 	gwutil.ProfileHeap(file)
 }
 
@@ -986,7 +1002,6 @@ func LocalIPs() []string {
 //======================================================================
 
 // From http://blog.kamilkisiel.net/blog/2012/07/05/using-the-go-regexp-package/
-//
 type tsregexp struct {
 	*regexp.Regexp
 }
@@ -1087,7 +1102,6 @@ var foldersRE = regexp.MustCompile(`:\s*`)
 // Temp:                   /foo
 // Personal configuration: /home/gcla/.config/wireshark
 // Global configuration:   /usr/share/wireshark
-//
 func TsharkSetting(field string) (string, error) {
 	res, err := TsharkSettings(field)
 	if err != nil {
@@ -1134,7 +1148,7 @@ func WiresharkProfileNames() []string {
 
 		files, err := ioutil.ReadDir(profFolder)
 		if err != nil {
-			log.Warnf("Could not read wireshark config folder %s: %v", profFolder, err)
+			log.Warn().Msgf("Could not read wireshark config folder %s: %v", profFolder, err)
 			continue
 		}
 
@@ -1409,6 +1423,24 @@ func ValidateTerm(term string) error {
 		_, _, err = dynamic.LoadTerminfo(term)
 	}
 	return err
+}
+
+func Intersection[T comparable](a, b []T) ([]T, bool) {
+	m := make(map[T]bool)
+	var c []T
+
+	for _, item := range a {
+		m[item] = true
+	}
+
+	var intersects bool
+	for _, item := range b {
+		if _, ok := m[item]; ok {
+			c = append(c, item)
+			intersects = true
+		}
+	}
+	return c, intersects
 }
 
 //======================================================================

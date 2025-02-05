@@ -15,12 +15,13 @@ import (
 	"strings"
 
 	"github.com/antchfx/xmlquery"
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/widgets/tree"
-	"github.com/gcla/termshark/v2/widgets/hexdumper2"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/widgets/tree"
+
+	"github.com/sruehl/termshark/v2/widgets/hexdumper2"
 )
 
 //======================================================================
@@ -182,7 +183,7 @@ func DecodePacket(data []byte) *Model { // nil if failure
 	var n Model
 	err := d.Decode(&n)
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err).Msg("Decode error")
 		return nil
 	}
 
@@ -191,7 +192,7 @@ func DecodePacket(data []byte) *Model { // nil if failure
 	// Have to make this here because this is when I have access to the data...
 	n.QueryModel, err = xmlquery.Parse(strings.NewReader(string(data)))
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err).Msg("Decode error")
 	}
 
 	return tr
@@ -211,7 +212,7 @@ func (p *Model) streamIndex(proto string) gwutil.IntOption {
 	if showNode := xmlquery.FindOne(p.QueryModel, fmt.Sprintf("//field[@name='%s.stream']/@show", proto)); showNode != nil {
 		idx, err := strconv.Atoi(showNode.InnerText())
 		if err != nil {
-			log.Warnf("Unexpected %s node innertext value %s", proto, showNode.InnerText())
+			log.Warn().Msgf("Unexpected %s node innertext value %s", proto, showNode.InnerText())
 		} else {
 			res = gwutil.SomeInt(idx)
 		}

@@ -6,7 +6,11 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"net/http"
+	_ "net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,33 +22,30 @@ import (
 	"time"
 
 	"github.com/blang/semver"
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/capinfo"
-	"github.com/gcla/termshark/v2/pkg/cli"
-	"github.com/gcla/termshark/v2/pkg/confwatcher"
-	"github.com/gcla/termshark/v2/pkg/convs"
-	"github.com/gcla/termshark/v2/pkg/fields"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	"github.com/gcla/termshark/v2/pkg/shark"
-	"github.com/gcla/termshark/v2/pkg/streams"
-	"github.com/gcla/termshark/v2/pkg/summary"
-	"github.com/gcla/termshark/v2/pkg/system"
-	"github.com/gcla/termshark/v2/pkg/tailfile"
-	"github.com/gcla/termshark/v2/pkg/tty"
-	"github.com/gcla/termshark/v2/ui"
-	"github.com/gcla/termshark/v2/widgets/filter"
-	"github.com/gcla/termshark/v2/widgets/wormhole"
 	"github.com/gdamore/tcell/v2"
 	flags "github.com/jessevdk/go-flags"
 	"github.com/mattn/go-isatty"
+	log "github.com/rs/zerolog/log"
 	"github.com/shibukawa/configdir"
-	log "github.com/sirupsen/logrus"
+	"github.com/sruehl/gowid"
 
-	"net/http"
-	_ "net/http"
-	_ "net/http/pprof"
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/capinfo"
+	"github.com/sruehl/termshark/v2/pkg/cli"
+	"github.com/sruehl/termshark/v2/pkg/confwatcher"
+	"github.com/sruehl/termshark/v2/pkg/convs"
+	"github.com/sruehl/termshark/v2/pkg/fields"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
+	"github.com/sruehl/termshark/v2/pkg/shark"
+	"github.com/sruehl/termshark/v2/pkg/streams"
+	"github.com/sruehl/termshark/v2/pkg/summary"
+	"github.com/sruehl/termshark/v2/pkg/system"
+	"github.com/sruehl/termshark/v2/pkg/tailfile"
+	"github.com/sruehl/termshark/v2/pkg/tty"
+	"github.com/sruehl/termshark/v2/ui"
+	"github.com/sruehl/termshark/v2/widgets/filter"
+	"github.com/sruehl/termshark/v2/widgets/wormhole"
 )
 
 //======================================================================
@@ -84,7 +85,7 @@ func main() {
 
 	exe, err := os.Executable()
 	if err != nil {
-		log.Warnf("Unexpected error determining termshark executable: %v", err)
+		log.Warn().Msgf("Unexpected error determining termshark executable: %v", err)
 		os.Exit(1)
 	}
 
@@ -101,7 +102,7 @@ func main() {
 	// all init() functions be called again
 	err = syscall.Exec(exe, os.Args, os.Environ())
 	if err != nil {
-		log.Warnf("Unexpected error exec-ing termshark %s: %v", exe, err)
+		log.Warn().Msgf("Unexpected error exec-ing termshark %s: %v", exe, err)
 		res = 1
 	}
 
@@ -173,7 +174,8 @@ func cmain() int {
 		// If it's because of --help, then skip the tty check, and display termshark's help. This
 		// ensures we don't display a useless help, and further that you can pipe termshark's help
 		// into PAGER without invoking tshark.
-		if ferr, ok := err.(*flags.Error); ok && ferr.Type == flags.ErrHelp {
+		var ferr *flags.Error
+		if errors.As(err, &ferr) && errors.Is(ferr.Type, flags.ErrHelp) {
 			passthru = false
 		} else {
 			return 1
@@ -353,12 +355,12 @@ func cmain() int {
 		if pcapf == "" {
 			if termshark.IsTerminal(os.Stdin.Fd()) {
 				pfile, err := system.PickFile()
-				switch err {
-				case nil:
+				switch {
+				case err == nil:
 					// We're on termux/android, and we were given a file. Note that termux
 					// makes a copy, so we ought to clean that up when termshark terminates.
-					psrcs = append(psrcs, pcap.TemporaryFileSource{pcap.FileSource{Filename: pfile}})
-				case system.NoPicker:
+					psrcs = append(psrcs, pcap.TemporaryFileSource{FileSource: pcap.FileSource{Filename: pfile}})
+				case errors.Is(err, system.NoPicker):
 					// We're not on termux/android. Treat like this:
 					// $ termshark
 					// # use network interface 1 - maps to
@@ -370,7 +372,7 @@ func cmain() int {
 					// !NoPicker means we could be on android/termux, but something else went wrong
 					if err = system.PickFileError(err.Error()); err != nil {
 						// Termux's toast ran into an error...! Maybe not installed?
-						fmt.Fprintf(os.Stderr, err.Error())
+						_, _ = fmt.Fprintf(os.Stderr, err.Error())
 					}
 					return 1
 				}
@@ -538,11 +540,11 @@ func cmain() int {
 			fmt.Fprintf(os.Stderr, "Could not create log file %s: %v\n", logfile, err)
 			return 1
 		}
-		// Don't close it - just let the descriptor be closed at exit. logrus is used
+		// Don't close it - just let the descriptor be closed at exit. zerolog is used
 		// in many places, some outside of this main function, and closing results in
 		// an error often on freebsd.
 		//defer logfd.Close()
-		log.SetOutput(logfd)
+		log.Logger = log.Logger.Output(logfd)
 	}
 
 	debug := false
@@ -552,10 +554,11 @@ func cmain() int {
 
 	if debug {
 		for _, addr := range termshark.LocalIPs() {
-			log.Infof("Starting debug web server at http://%s:6060/debug/pprof/", addr)
+			log.Info().Msgf("Starting debug web server at http://%s:6060/debug/pprof/", addr)
 		}
 		go func() {
-			log.Println(http.ListenAndServe("0.0.0.0:6060", nil))
+			err := http.ListenAndServe("0.0.0.0:6060", nil)
+			log.Info().Err(err).Msg("done listening")
 		}()
 	}
 
@@ -773,14 +776,14 @@ func cmain() int {
 	}
 	tsharkArgs := profiles.ConfStringSlice("main.tshark-args", []string{})
 	if ui.PacketColors && !ui.PacketColorsSupported {
-		log.Warnf("Packet coloring is enabled, but %s does not support --color", tsharkBin)
+		log.Warn().Msgf("Packet coloring is enabled, but %s does not support --color", tsharkBin)
 		ui.PacketColors = false
 	}
 	cacheSize := profiles.ConfInt("main.pcap-cache-size", 64)
 	bundleSize := profiles.ConfInt("main.pcap-bundle-size", 1000)
 	if bundleSize <= 0 {
 		maxBundleSize := 100000
-		log.Infof("Config specifies pcap-bundle-size as %d - setting to max (%d)", bundleSize, maxBundleSize)
+		log.Info().Msgf("Config specifies pcap-bundle-size as %d - setting to max (%d)", bundleSize, maxBundleSize)
 		bundleSize = maxBundleSize
 	}
 
@@ -830,7 +833,7 @@ func cmain() int {
 		gowid.IgnoreBase16 = (os.Getenv("BASE16_SHELL") != "")
 	}
 	if gowid.IgnoreBase16 {
-		log.Infof("Will not consider colors 0-21 from the terminal 256-color-space when interpolating theme colors")
+		log.Info().Msgf("Will not consider colors 0-21 from the terminal 256-color-space when interpolating theme colors")
 		// If main.respect-colorterm=true then termshark will leave COLORTERM set and use
 		// 24-bit color if possible. The problem with this, in the presence of base16, is that
 		// some terminal-emulators - e.g. gnome-terminal - still seems to map RGB ANSI codes
@@ -839,7 +842,7 @@ func cmain() int {
 		// termshark will fall back to 256-colors if base16 is detected because I can
 		// programmatically avoid choosing colors 0-21 for anything termshark needs.
 		if os.Getenv("COLORTERM") != "" && !profiles.ConfBool("main.respect-colorterm", false) {
-			log.Infof("Pessimistically disabling 24-bit color to avoid conflicts with base16")
+			log.Info().Msgf("Pessimistically disabling 24-bit color to avoid conflicts with base16")
 			os.Unsetenv("COLORTERM")
 		}
 	}
@@ -1159,7 +1162,7 @@ Loop:
 			// Only check the cache dir if we own it; don't want to delete pcap files
 			// that might be shared with wireshark
 			if profiles.ConfBool("main.use-tshark-temp-for-pcap-cache", false) {
-				log.Infof("Termshark does not own the pcap temp dir %s; skipping size check", termshark.PcapDir())
+				log.Info().Msgf("Termshark does not own the pcap temp dir %s; skipping size check", termshark.PcapDir())
 			} else {
 				termshark.PrunePcapCache()
 			}
@@ -1176,7 +1179,7 @@ Loop:
 			app.Redraw()
 
 		case <-ui.StartUIChan:
-			log.Infof("Launching termshark UI")
+			log.Info().Msgf("Launching termshark UI")
 
 			// Go to termshark UI view
 			if err = app.ActivateScreen(); err != nil {
@@ -1213,7 +1216,7 @@ Loop:
 						if !profiles.ConfBool("main.disable-term-helper", false) {
 							err = termshark.Does256ColorTermExist()
 							if err != nil {
-								log.Infof("Must use 8-color mode because 256-color version of TERM=%s unavailable - %v.", os.Getenv("TERM"), err)
+								log.Info().Msgf("Must use 8-color mode because 256-color version of TERM=%s unavailable - %v.", os.Getenv("TERM"), err)
 							} else {
 								time.AfterFunc(time.Duration(3)*time.Second, func() {
 									app.Run(gowid.RunFunction(func(app gowid.IApp) {
@@ -1273,7 +1276,7 @@ Loop:
 					uiSuspended = true
 
 				} else {
-					log.Infof("UI not active - no terminal changes required.")
+					log.Info().Msgf("UI not active - no terminal changes required.")
 				}
 
 				// This is not synchronous, but some time after calling this, we'll be suspended.
@@ -1305,18 +1308,18 @@ Loop:
 				if debug {
 					termshark.ProfileCPUFor(20)
 				} else {
-					log.Infof("SIGUSR1 ignored by termshark - see the --debug flag")
+					log.Info().Msgf("SIGUSR1 ignored by termshark - see the --debug flag")
 				}
 
 			} else if system.IsSigUSR2(sig) {
 				if debug {
 					termshark.ProfileHeap()
 				} else {
-					log.Infof("SIGUSR2 ignored by termshark - see the --debug flag")
+					log.Info().Msgf("SIGUSR2 ignored by termshark - see the --debug flag")
 				}
 
 			} else {
-				log.Infof("Starting termination via signal %v", sig)
+				log.Info().Msgf("Starting termination via signal %v", sig)
 				ui.RequestQuit()
 			}
 
@@ -1357,7 +1360,7 @@ Loop:
 		case <-watcher.ConfigChanged():
 			// Re-read so changes that can take effect immediately do so
 			if err := profiles.ReadDefaultConfig(dirs[0].Path); err != nil {
-				log.Warnf("Unexpected error re-reading toml config: %v", err)
+				log.Warn().Msgf("Unexpected error re-reading toml config: %v", err)
 			}
 			ui.UpdateRecentMenu(app)
 		}

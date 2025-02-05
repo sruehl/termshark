@@ -6,7 +6,7 @@
 package ui
 
 import (
-	"github.com/gcla/gowid"
+	"github.com/sruehl/gowid"
 )
 
 // Dynamically load conv. If the convs window was last opened with a different filter, and the "limit to

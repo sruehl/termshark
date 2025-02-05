@@ -12,8 +12,8 @@ assignees: ''
 Please verify these before submitting an issue.
 
 - [ ] I am running the latest versions of Termshark and Wireshark.
-- [ ] I checked the [README](https://github.com/gcla/termshark) and [User Guide](https://github.com/gcla/termshark/blob/master/docs/UserGuide.md) and found no answer
-- [ ] I searched [issues](https://github.com/gcla/termshark/issues?q=is%3Aissue) and this has not yet been filed
+- [ ] I checked the [README](https://github.com/sruehl/termshark) and [User Guide](https://github.com/sruehl/termshark/blob/master/docs/UserGuide.md) and found no answer
+- [ ] I searched [issues](https://github.com/sruehl/termshark/issues?q=is%3Aissue) and this has not yet been filed
 
 ## Problem 
 

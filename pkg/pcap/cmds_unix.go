@@ -2,7 +2,7 @@
 // code is governed by the MIT license that can be found in the LICENSE
 // file.
 
-// +build !windows
+//go:build !windows
 
 package pcap
 
@@ -11,7 +11,7 @@ import (
 
 	"github.com/kballard/go-shellquote"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
 )
 
 func (c *Command) PutInNewGroupOnUnix() {
@@ -27,7 +27,7 @@ func (c *Command) Kill() error {
 	if c.Cmd.Process == nil {
 		return errors.WithStack(ProcessNotStarted{Command: c.Cmd})
 	}
-	log.Infof("Sending SIGKILL to %v: %v", c.Cmd.Process.Pid, shellquote.Join(c.Cmd.Args...))
+	log.Info().Msgf("Sending SIGKILL to %v: %v", c.Cmd.Process.Pid, shellquote.Join(c.Cmd.Args...))
 	// The PSML tshark process doesn't reliably die with a SIGTERM - not sure why
 	return syscall.Kill(-c.Cmd.Process.Pid, syscall.SIGKILL)
 }

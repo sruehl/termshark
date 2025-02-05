@@ -15,15 +15,16 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/configs/profiles"
-	"github.com/gcla/termshark/v2/pkg/format"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	"github.com/gcla/termshark/v2/widgets/search"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/table"
 	"gitlab.com/jonas.jasas/condchan"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/configs/profiles"
+	"github.com/sruehl/termshark/v2/pkg/format"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
+	"github.com/sruehl/termshark/v2/widgets/search"
 )
 
 //======================================================================
@@ -41,7 +42,6 @@ func (s FilterResult) PacketNumber() int {
 //======================================================================
 
 // Search via a display filter
-//
 type FilterSearchCallbacks struct {
 	*commonSearchCallbacks
 	curSearchTerm string
@@ -72,6 +72,7 @@ func newFilterSearchState(filename string, cmd pcap.IPcapCommand) (*filterSearch
 
 	info, err := os.Stat(filename)
 	if err != nil {
+		cancelFn()
 		return nil, err
 	}
 
@@ -433,7 +434,7 @@ func (w *FilterSearchCallbacks) runProcess(ctx context.Context, psmlCmd pcap.IPc
 		}
 	}, Goroutinewg)
 
-	log.Infof("Started PSML search command %v with pid %d", psmlCmd, psmlCmd.Pid())
+	log.Info().Msgf("Started PSML search command %v with pid %d", psmlCmd, psmlCmd.Pid())
 
 	d := xml.NewDecoder(psmlOut)
 

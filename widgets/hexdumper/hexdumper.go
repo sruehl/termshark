@@ -13,18 +13,19 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/palettemap"
-	"github.com/gcla/gowid/widgets/pile"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/format"
-	"github.com/gcla/termshark/v2/widgets/renderfocused"
 	"github.com/gdamore/tcell/v2"
 	"github.com/pkg/errors"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/palettemap"
+	"github.com/sruehl/gowid/widgets/pile"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/text"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/format"
+	"github.com/sruehl/termshark/v2/widgets/renderfocused"
 )
 
 //======================================================================

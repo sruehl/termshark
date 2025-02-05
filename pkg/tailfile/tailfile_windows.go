@@ -7,7 +7,7 @@ package tailfile
 import (
 	"os"
 
-	"github.com/gcla/tail"
+	"github.com/sruehl/tail"
 )
 
 //======================================================================

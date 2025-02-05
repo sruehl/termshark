@@ -10,8 +10,8 @@ package expander
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/boxadapter"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/boxadapter"
 )
 
 //======================================================================

@@ -7,15 +7,16 @@ package psmlmodel
 import (
 	"sort"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/button"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/isselected"
-	"github.com/gcla/gowid/widgets/styled"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/gowid/widgets/text"
-	"github.com/gcla/termshark/v2/widgets/expander"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/button"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/isselected"
+	"github.com/sruehl/gowid/widgets/styled"
+	"github.com/sruehl/gowid/widgets/table"
+	"github.com/sruehl/gowid/widgets/text"
+
+	"github.com/sruehl/termshark/v2/widgets/expander"
 )
 
 //======================================================================

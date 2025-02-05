@@ -6,12 +6,13 @@
 package ui
 
 import (
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/columns"
-	"github.com/gcla/gowid/widgets/holder"
-	"github.com/gcla/gowid/widgets/menu"
-	"github.com/gcla/termshark/v2/ui/menuutil"
 	"github.com/gdamore/tcell/v2"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/columns"
+	"github.com/sruehl/gowid/widgets/holder"
+	"github.com/sruehl/gowid/widgets/menu"
+
+	"github.com/sruehl/termshark/v2/ui/menuutil"
 )
 
 //======================================================================

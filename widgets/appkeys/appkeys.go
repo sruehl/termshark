@@ -8,8 +8,8 @@ package appkeys
 import (
 	"fmt"
 
-	"github.com/gcla/gowid"
 	"github.com/gdamore/tcell/v2"
+	"github.com/sruehl/gowid"
 )
 
 //======================================================================

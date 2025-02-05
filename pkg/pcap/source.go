@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gcla/termshark/v2/pkg/system"
+	"github.com/sruehl/termshark/v2/pkg/system"
 )
 
 //======================================================================

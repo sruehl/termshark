@@ -2,7 +2,7 @@
 // code is governed by the MIT license that can be found in the LICENSE
 // file.
 //
-// +build !windows
+//go:build !windows
 
 package tty
 
@@ -10,14 +10,13 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/gcla/term/termios"
-	"golang.org/x/sys/unix"
+	"github.com/sruehl/term/termios"
 )
 
 //======================================================================
 
 type TerminalSignals struct {
-	tiosp *unix.Termios
+	tiosp *syscall.Termios
 	out   *os.File
 	set   bool
 }
@@ -28,27 +27,27 @@ func (t *TerminalSignals) IsSet() bool {
 
 func (t *TerminalSignals) Restore() {
 	if t.out != nil {
-		fd := uintptr(t.out.Fd())
-		termios.Tcsetattr(fd, termios.TCSANOW, t.tiosp)
+		fd := t.out.Fd()
+		_ = termios.Tcsetattr(fd, termios.TCSANOW, t.tiosp)
 
-		t.out.Close()
+		_ = t.out.Close()
 		t.out = nil
 	}
 	t.set = false
 }
 
 func (t *TerminalSignals) Set(outtty string) error {
-	var e error
-	var newtios unix.Termios
+	var err error
+	var newtios syscall.Termios
 	var fd uintptr
 
-	if t.out, e = os.OpenFile(outtty, os.O_WRONLY, 0); e != nil {
+	if t.out, err = os.OpenFile(outtty, os.O_WRONLY, 0); err != nil {
 		goto failed
 	}
 
-	fd = uintptr(t.out.Fd())
+	fd = t.out.Fd()
 
-	if t.tiosp, e = termios.Tcgetattr(fd); e != nil {
+	if err = termios.Tcgetattr(fd, t.tiosp); err != nil {
 		goto failed
 	}
 
@@ -62,7 +61,7 @@ func (t *TerminalSignals) Set(outtty string) error {
 	newtios.Cc[syscall.VINTR] = 0
 	newtios.Cc[syscall.VQUIT] = 0
 
-	if e = termios.Tcsetattr(fd, termios.TCSANOW, &newtios); e != nil {
+	if err = termios.Tcsetattr(fd, termios.TCSANOW, &newtios); err != nil {
 		goto failed
 	}
 
@@ -72,10 +71,10 @@ func (t *TerminalSignals) Set(outtty string) error {
 
 failed:
 	if t.out != nil {
-		t.out.Close()
+		_ = t.out.Close()
 		t.out = nil
 	}
-	return e
+	return err
 }
 
 //======================================================================

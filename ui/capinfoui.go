@@ -10,11 +10,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/capinfo"
-	"github.com/gcla/termshark/v2/pkg/pcap"
-	log "github.com/sirupsen/logrus"
+	log "github.com/rs/zerolog/log"
+	"github.com/sruehl/gowid"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/capinfo"
+	"github.com/sruehl/termshark/v2/pkg/pcap"
 )
 
 var CapinfoLoader *capinfo.Loader
@@ -62,7 +63,7 @@ func (t *capinfoParseHandler) OnCapinfoData(data string) {
 	CapinfoData = strings.Replace(data, "\r\n", "\n", -1) // For windows...
 	fi, err := os.Stat(Loader.PcapPdml)
 	if err != nil {
-		log.Warnf("Could not read mtime from pcap %s: %v", Loader.PcapPdml, err)
+		log.Warn().Msgf("Could not read mtime from pcap %s: %v", Loader.PcapPdml, err)
 	} else {
 		CapinfoTime = fi.ModTime()
 	}

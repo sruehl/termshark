@@ -9,11 +9,11 @@ package scrollabletext
 import (
 	"strings"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/gwutil"
-	"github.com/gcla/gowid/widgets/selectable"
-	"github.com/gcla/gowid/widgets/text"
 	"github.com/gdamore/tcell/v2"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/gwutil"
+	"github.com/sruehl/gowid/widgets/selectable"
+	"github.com/sruehl/gowid/widgets/text"
 )
 
 //======================================================================

@@ -5,7 +5,7 @@
 package pcap
 
 import (
-	"github.com/gcla/gowid/gwutil"
+	"github.com/sruehl/gowid/gwutil"
 )
 
 //======================================================================

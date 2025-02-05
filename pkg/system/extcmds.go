@@ -2,7 +2,7 @@
 // code is governed by the MIT license that can be found in the LICENSE
 // file.
 
-// +build !darwin,!android,!windows
+//go:build !darwin && !android && !windows
 
 package system
 

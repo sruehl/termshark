@@ -140,7 +140,7 @@ remapped colors as the closest match to a theme's color - resulting in incorrect
 If you don't have the source, clone it like this:
 
 ```bash
-$ git clone https://github.com/gcla/termshark
+$ git clone https://github.com/sruehl/termshark
 ```
 
 You'll get best results with the latest version of Golang - 1.15 as I write this - but anything >= 1.12 will work. 
@@ -353,7 +353,7 @@ You can find more detail at https://wiki.wireshark.org/CaptureSetup/CapturePrivi
 
 ## Why is termshark generating traffic on port 5037?
 
-See [this issue](https://github.com/gcla/termshark/issues/98).
+See [this issue](https://github.com/sruehl/termshark/issues/98).
 
 TL;DR - try deleting `/usr/lib/wireshark/extcap/androiddump`.
 

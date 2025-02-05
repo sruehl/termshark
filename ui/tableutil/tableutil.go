@@ -7,11 +7,12 @@
 package tableutil
 
 import (
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/table"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/widgets/appkeys"
 	"github.com/gdamore/tcell/v2"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/table"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/widgets/appkeys"
 )
 
 //======================================================================

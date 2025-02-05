@@ -5,8 +5,8 @@
 package noroot
 
 import (
-	"github.com/gcla/gowid/widgets/list"
-	"github.com/gcla/gowid/widgets/tree"
+	"github.com/sruehl/gowid/widgets/list"
+	"github.com/sruehl/gowid/widgets/tree"
 )
 
 //======================================================================

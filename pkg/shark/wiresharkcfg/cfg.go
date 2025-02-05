@@ -10,7 +10,7 @@ import (
 	"path"
 	"strings"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/shibukawa/configdir"
 )
 

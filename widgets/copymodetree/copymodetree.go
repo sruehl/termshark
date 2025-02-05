@@ -12,11 +12,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gcla/gowid"
-	"github.com/gcla/gowid/widgets/list"
-	"github.com/gcla/gowid/widgets/tree"
-	"github.com/gcla/termshark/v2"
-	"github.com/gcla/termshark/v2/pkg/pdmltree"
+	"github.com/sruehl/gowid"
+	"github.com/sruehl/gowid/widgets/list"
+	"github.com/sruehl/gowid/widgets/tree"
+
+	"github.com/sruehl/termshark/v2"
+	"github.com/sruehl/termshark/v2/pkg/pdmltree"
 )
 
 //======================================================================
