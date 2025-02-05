@@ -17,7 +17,7 @@ import (
 
 //======================================================================
 
-var re *regexp.Regexp = regexp.MustCompile(`^pos:\s*([0-9]+)`)
+var re = regexp.MustCompile(`^pos:\s*([0-9]+)`)
 
 var FileNotOpenError = fmt.Errorf("Could not find file among descriptors")
 var ParseError = fmt.Errorf("Could not match file position")
@@ -59,9 +59,3 @@ func ProcessProgress(pid int, filename string) (int64, int64, error) {
 	}
 	return int64(pos), fi.Size(), nil
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

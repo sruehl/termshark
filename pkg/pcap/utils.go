@@ -40,9 +40,3 @@ func (a *maxTracker) update(candidate int) {
 		a.cur = candidate
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

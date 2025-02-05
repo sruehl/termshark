@@ -7,11 +7,12 @@ package convs
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os/exec"
 	"sync"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 
 	"github.com/sruehl/termshark/v2"
@@ -134,7 +135,8 @@ func (c *Loader) loadConvAsync(pcapf string, convs []string, filter string, abs 
 			case err = <-termChan:
 				state = pcap.Terminated
 				if !c.SuppressErrors && err != nil {
-					if _, ok := err.(*exec.ExitError); ok {
+					var exitError *exec.ExitError
+					if errors.As(err, &exitError) {
 						pcap.HandleError(pcap.ConvCode, app, pcap.MakeUsefulError(c.convsCmd, err), cb)
 					}
 				}
@@ -203,9 +205,3 @@ func (c *Loader) loadConvAsync(pcapf string, convs []string, filter string, abs 
 
 	c.convsCancelFn()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

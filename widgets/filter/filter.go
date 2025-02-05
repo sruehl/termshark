@@ -342,9 +342,9 @@ func New(name string, opt Options) *Widget {
 		}
 	}, Goroutinewg)
 
-	ed.OnTextSet(gowid.MakeWidgetCallback("cb2", gowid.WidgetChangedFunction(func(app gowid.IApp, ew gowid.IWidget) {
+	ed.OnTextSet(gowid.MakeWidgetCallback("cb2", func(app gowid.IApp, ew gowid.IWidget) {
 		res.UpdateCompletions(app)
-	})))
+	}))
 
 	return res
 }
@@ -435,7 +435,7 @@ func newMenuWidgets(ed *edit.Widget, completions []string) []gowid.IWidget {
 				}
 				end++
 			}
-			ed.SetText(fmt.Sprintf("%s%s%s", txt[0:start], scopy, txt[end:len(txt)]), app)
+			ed.SetText(fmt.Sprintf("%s%s%s", txt[0:start], scopy, txt[end:]), app)
 			ed.SetCursorPos(len(txt[0:start])+len(scopy), app)
 
 		}))
@@ -805,9 +805,3 @@ func (f *DisplayFilterValidator) Validate(filter string) {
 		}
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

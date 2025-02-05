@@ -135,9 +135,3 @@ Node 1: 192.168.0.193:21
 	_, err = ParseReader("", strings.NewReader(inp1), GlobalStore("context", noErrContext{}))
 	assert.NoError(t, err)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

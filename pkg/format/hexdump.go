@@ -40,9 +40,3 @@ func HexDump(data []byte, opts ...Options) string {
 
 	return strings.TrimRight(res, "\n")
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

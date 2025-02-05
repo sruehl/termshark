@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 
 	"github.com/rakyll/statik/fs"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/shibukawa/configdir"
 	"github.com/spf13/viper"
 	"github.com/sruehl/gowid"
@@ -147,9 +147,3 @@ func Load(name string, app gowid.IApp) error {
 
 	return err
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

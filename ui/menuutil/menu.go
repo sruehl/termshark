@@ -245,9 +245,3 @@ func MenuNavigatingKeyPress(evk *tcell.EventKey, left *NextMenu, right *NextMenu
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

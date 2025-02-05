@@ -261,9 +261,3 @@ func (c Commands) Pdml(pcap string, displayFilter string) IPcapCommand {
 
 	return &Command{Cmd: exec.Command(termshark.TSharkBin(), args...)}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

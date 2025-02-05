@@ -34,9 +34,3 @@ func (f *Walker) Previous(pos list.IWalkerPosition) list.IWalkerPosition {
 	}
 	return tree.WalkerPrevious(f, pos)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

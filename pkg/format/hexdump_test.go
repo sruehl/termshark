@@ -31,9 +31,3 @@ func TestHexDump1(t *testing.T) {
 		}) == test.out))
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

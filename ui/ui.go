@@ -163,9 +163,9 @@ type MenuHolder struct {
 	gowid.IMenuCompatible
 }
 
-var multiMenu *MenuHolder = &MenuHolder{}
+var multiMenu = &MenuHolder{}
 var multiMenuWidget *holder.Widget
-var multiMenu2 *MenuHolder = &MenuHolder{}
+var multiMenu2 = &MenuHolder{}
 var multiMenu2Widget *holder.Widget
 var multiMenu1Opener MultiMenuOpener
 var multiMenu2Opener MultiMenuOpener
@@ -426,7 +426,7 @@ func makePdmlFilterMenu(filter string, val string) *menu.Widget {
 	}
 
 	pdmlFilterItems := []menuutil.SimpleMenuItem{
-		menuutil.SimpleMenuItem{
+		{
 			Txt: fmt.Sprintf("Apply as Column: %s", filter),
 			Key: gowid.MakeKey('c'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -435,14 +435,14 @@ func makePdmlFilterMenu(filter string, val string) *menu.Widget {
 			},
 		},
 		menuutil.MakeMenuDivider(),
-		menuutil.SimpleMenuItem{
+		{
 			Txt: fmt.Sprintf("Apply Filter: %s", filterStr),
 			Key: gowid.MakeKey('a'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
 				openPdmlFilterMenu2(false, w, app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: fmt.Sprintf("Prep Filter: %s", filterStr),
 			Key: gowid.MakeKey('p'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -516,7 +516,7 @@ func UpdateProgressBarForFile(c *pcap.PacketLoader, prevRatio float64, app gowid
 	// will show up in the struct and hex views.
 	currentDisplayedRow := -1
 	var currentDisplayedRowMod int64 = -1
-	var currentDisplayedRowDiv int = -1
+	var currentDisplayedRowDiv = -1
 	if packetListView != nil {
 		if fxy, err := packetListView.FocusXY(); err == nil {
 			currentRowId, ok := packetListView.Model().RowIdentifier(fxy.Row)
@@ -1276,7 +1276,7 @@ func processCopyChoices(copyLen int, app gowid.IApp) {
 			ClipIndicator: "...",
 		}))
 
-		btn.OnClick(gowid.MakeWidgetCallback("cb", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		btn.OnClick(gowid.MakeWidgetCallback("cb", func(app gowid.IApp, w gowid.IWidget) {
 			cc.Close(app)
 			app.InCopyMode(false)
 
@@ -1288,7 +1288,7 @@ func processCopyChoices(copyLen int, app gowid.IApp) {
 					app: app,
 				},
 			})
-		})))
+		}))
 
 		btn2 := styled.NewFocus(btn, gowid.MakeStyledAs(gowid.StyleReverse))
 		tog := pile.NewFlow(lbl, btn2, divider.NewUnicode())
@@ -1317,11 +1317,11 @@ func processCopyChoices(copyLen int, app gowid.IApp) {
 		},
 	)
 
-	cc.OnOpenClose(gowid.MakeWidgetCallback("cb", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+	cc.OnOpenClose(gowid.MakeWidgetCallback("cb", func(app gowid.IApp, w gowid.IWidget) {
 		if !cc.IsOpen() {
 			app.InCopyMode(false)
 		}
-	})))
+	}))
 
 	dialog.OpenExt(cc, appView, ratio(0.5), ratio(0.8), app)
 }
@@ -1336,7 +1336,7 @@ func askToSave(app gowid.IApp, next callWithAppFn) {
 		framed.NewSpace(hpadding.New(msg, hmiddle, fixed)),
 		dialog.Options{
 			Buttons: []dialog.Button{
-				dialog.Button{
+				{
 					Msg: "Keep",
 					Action: gowid.MakeWidgetCallback("cb",
 						func(app gowid.IApp, widget gowid.IWidget) {
@@ -1345,7 +1345,7 @@ func askToSave(app gowid.IApp, next callWithAppFn) {
 						},
 					),
 				},
-				dialog.Button{
+				{
 					Msg: "Delete",
 					Action: gowid.MakeWidgetCallback("cb",
 						func(app gowid.IApp, widget gowid.IWidget) {
@@ -1377,7 +1377,7 @@ func reallyQuit(app gowid.IApp) {
 		framed.NewSpace(hpadding.New(msg, hmiddle, fixed)),
 		dialog.Options{
 			Buttons: []dialog.Button{
-				dialog.Button{
+				{
 					Msg: "Ok",
 					Action: gowid.MakeWidgetCallback("cb",
 						func(app gowid.IApp, widget gowid.IWidget) {
@@ -1569,7 +1569,7 @@ func confirmAction(msgt string, ok func(gowid.IApp), app gowid.IApp) {
 		framed.NewSpace(hpadding.New(msg, hmiddle, fixed)),
 		dialog.Options{
 			Buttons: []dialog.Button{
-				dialog.Button{
+				{
 					Msg: "Ok",
 					Action: gowid.MakeWidgetCallback("cb",
 						func(app gowid.IApp, w gowid.IWidget) {
@@ -2475,7 +2475,7 @@ func makePacketListModel(psml iPsmlInfo, app gowid.IApp) *psmlmodel.Model {
 	cols := shark.GetPsmlColumnFormatCached()
 
 	if len(expandingModel.Comparators) > 0 {
-		for i, _ := range expandingModel.Comparators {
+		for i := range expandingModel.Comparators {
 			if i < len(widths) && i < len(cols) {
 				if field, ok := shark.AllowedColumnFormats[cols[i].Field.Token]; ok {
 					if field.Comparator != nil {
@@ -2773,15 +2773,15 @@ func (p *pdmlFilterActor) HandleFilterMenuSelection(comb FilterCombinator, app g
 	multiMenu2Opener.CloseMenu(p.menu2, app)
 	multiMenu1Opener.CloseMenu(p.menu1, app)
 
-	filter := ComputeFilterCombOp(comb, p.filter, FilterWidget.Value())
+	_filter := ComputeFilterCombOp(comb, p.filter, FilterWidget.Value())
 
-	FilterWidget.SetValue(filter, app)
+	FilterWidget.SetValue(_filter, app)
 
 	if p.prepare {
 		// Don't run the filter, just add to the displayfilter widget. Leave focus there
 		setFocusOnDisplayFilter(app)
 	} else {
-		RequestNewFilter(filter, app)
+		RequestNewFilter(_filter, app)
 	}
 
 }
@@ -2922,9 +2922,9 @@ func getStructWidgetToDisplay(row int, app gowid.IApp) gowid.IWidget {
 			curSearchPosition = nil
 		}
 
-		tb.OnFocusChanged(gowid.MakeWidgetCallback("cb", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		tb.OnFocusChanged(gowid.MakeWidgetCallback("cb", func(app gowid.IApp, w gowid.IWidget) {
 			curStructWidgetState = tb.State()
-		})))
+		}))
 
 		walker.OnFocusChanged(tree.MakeCallback("cb", func(app gowid.IApp, twalker tree.ITreeWalker) {
 			updateHex(app, currentlyFocusedViewNotHex(), twalker)
@@ -3419,7 +3419,7 @@ func Build(tty string) (*gowid.App, error) {
 	generalMenuItems := make([]menuutil.SimpleMenuItem, 0)
 
 	generalMenuItems = append(generalMenuItems, []menuutil.SimpleMenuItem{
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Refresh Screen",
 			Key: gowid.MakeKeyExt2(0, tcell.KeyCtrlL, ' '),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3428,7 +3428,7 @@ func Build(tty string) (*gowid.App, error) {
 			},
 		},
 		// Put 2nd so a simple menu click, down, enter without thinking doesn't toggle dark mode (annoying...)
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Toggle Dark Mode",
 			Key: gowid.MakeKey('d'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3437,7 +3437,7 @@ func Build(tty string) (*gowid.App, error) {
 			},
 		},
 		menuutil.MakeMenuDivider(),
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Search Packets",
 			Key: gowid.MakeKeyExt2(0, tcell.KeyCtrlF, ' '),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3448,7 +3448,7 @@ func Build(tty string) (*gowid.App, error) {
 				setFocusOnSearch(app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Clear Packets",
 			Key: gowid.MakeKeyExt2(0, tcell.KeyCtrlW, ' '),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3456,7 +3456,7 @@ func Build(tty string) (*gowid.App, error) {
 				reallyClear(app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Send Pcap",
 			Key: gowid.MakeKey('s'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3464,7 +3464,7 @@ func Build(tty string) (*gowid.App, error) {
 				openWormhole(app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Edit Columns",
 			Key: gowid.MakeKey('e'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3493,7 +3493,7 @@ func Build(tty string) (*gowid.App, error) {
 
 	generalMenuItems = append(generalMenuItems, []menuutil.SimpleMenuItem{
 		menuutil.MakeMenuDivider(),
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Help",
 			Key: gowid.MakeKey('?'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3501,7 +3501,7 @@ func Build(tty string) (*gowid.App, error) {
 				OpenTemplatedDialog(appView, "UIHelp", app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "User Guide",
 			Key: gowid.MakeKey('u'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3512,7 +3512,7 @@ func Build(tty string) (*gowid.App, error) {
 				openResultsAfterCopy("UIUserGuide", termshark.UserGuideURL, app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "FAQ",
 			Key: gowid.MakeKey('f'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3524,7 +3524,7 @@ func Build(tty string) (*gowid.App, error) {
 			},
 		},
 		menuutil.MakeMenuDivider(),
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Found a Bug?",
 			Key: gowid.MakeKey('b'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3535,7 +3535,7 @@ func Build(tty string) (*gowid.App, error) {
 				openResultsAfterCopy("UIBug", termshark.BugURL, app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Feature Request?",
 			Key: gowid.MakeKey('f'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3547,7 +3547,7 @@ func Build(tty string) (*gowid.App, error) {
 			},
 		},
 		menuutil.MakeMenuDivider(),
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Quit",
 			Key: gowid.MakeKey('q'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3562,7 +3562,7 @@ func Build(tty string) (*gowid.App, error) {
 			generalMenuItems[0:2],
 			append(
 				[]menuutil.SimpleMenuItem{
-					menuutil.SimpleMenuItem{
+					{
 						Txt: "Toggle Packet Colors",
 						Key: gowid.MakeKey('c'),
 						CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3619,7 +3619,7 @@ func Build(tty string) (*gowid.App, error) {
 	}))
 
 	analysisMenuItems := []menuutil.SimpleMenuItem{
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Capture file properties",
 			Key: gowid.MakeKey('p'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3627,7 +3627,7 @@ func Build(tty string) (*gowid.App, error) {
 				startCapinfo(app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Reassemble stream",
 			Key: gowid.MakeKey('f'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -3635,7 +3635,7 @@ func Build(tty string) (*gowid.App, error) {
 				startStreamReassembly(app)
 			},
 		},
-		menuutil.SimpleMenuItem{
+		{
 			Txt: "Conversations",
 			Key: gowid.MakeKey('c'),
 			CB: func(app gowid.IApp, w gowid.IWidget) {
@@ -4402,9 +4402,3 @@ func Build(tty string) (*gowid.App, error) {
 
 	return app, err
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

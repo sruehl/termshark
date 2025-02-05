@@ -8,7 +8,7 @@ package ui
 import (
 	"fmt"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/widgets/dialog"
 	"github.com/sruehl/gowid/widgets/framed"
@@ -69,9 +69,3 @@ func openWormhole(app gowid.IApp) {
 
 	wormholeDialog.Open(appView, ratioupto(0.8, maxl), app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

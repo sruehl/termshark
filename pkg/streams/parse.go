@@ -134,9 +134,3 @@ func (f FollowStream) String() string {
 	data := strings.Join(datastrs, "\n")
 	return fmt.Sprintf("Follow: %s\nFilter: %s\nNode0: %s\nNode1: %s\nData:\n%s", f.Follow, f.Filter, f.Node0, f.Node1, data)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

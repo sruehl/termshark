@@ -80,13 +80,13 @@ type PsmlColumnSpec struct {
 }
 
 var DefaultPsmlColumnSpec = []PsmlColumnSpec{
-	PsmlColumnSpec{Field: PsmlField{Token: "%m"}, Name: "No."},
-	PsmlColumnSpec{Field: PsmlField{Token: "%t"}, Name: "Time"},
-	PsmlColumnSpec{Field: PsmlField{Token: "%s"}, Name: "Source"},
-	PsmlColumnSpec{Field: PsmlField{Token: "%d"}, Name: "Dest"},
-	PsmlColumnSpec{Field: PsmlField{Token: "%p"}, Name: "Proto"},
-	PsmlColumnSpec{Field: PsmlField{Token: "%L"}, Name: "Length"},
-	PsmlColumnSpec{Field: PsmlField{Token: "%i"}, Name: "Info"},
+	{Field: PsmlField{Token: "%m"}, Name: "No."},
+	{Field: PsmlField{Token: "%t"}, Name: "Time"},
+	{Field: PsmlField{Token: "%s"}, Name: "Source"},
+	{Field: PsmlField{Token: "%d"}, Name: "Dest"},
+	{Field: PsmlField{Token: "%p"}, Name: "Proto"},
+	{Field: PsmlField{Token: "%L"}, Name: "Length"},
+	{Field: PsmlField{Token: "%i"}, Name: "Info"},
 }
 
 type PsmlColumnInfo struct {
@@ -103,56 +103,56 @@ var AllowedColumnFormats map[string]PsmlColumnInfo
 // up to date over time. The canonical list is retrieved from tshark -G column-formats, then merged
 // with this to add useful short names and comparators.
 var BuiltInColumnFormats = map[string]PsmlColumnInfo{
-	"%q":      PsmlColumnInfo{Field: "%q", Short: "VLAN", Long: "802.1Q VLAN id", Comparator: table.IntCompare{}},                                /* 0) COL_8021Q_VLAN_ID */
-	"%Yt":     PsmlColumnInfo{Field: "%Yt", Short: "Time", Long: "Absolute date, as YYYY-MM-DD, and time", Comparator: table.DateTimeCompare{}},  /* 1) COL_ABS_YMD_TIME */
-	"%YDOYt":  PsmlColumnInfo{Field: "%YDOYt", Short: "Time", Long: "Absolute date, as YYYY/DOY, and time", Comparator: table.DateTimeCompare{}}, /* 2) COL_ABS_YDOY_TIME */
-	"%At":     PsmlColumnInfo{Field: "%At", Short: "Time", Long: "Absolute time", Comparator: table.DateTimeCompare{}},                           /* 3) COL_ABS_TIME */
-	"%V":      PsmlColumnInfo{Field: "%V", Short: "VSAN", Long: "Cisco VSAN"},                                                                    /* 4) COL_VSAN - !! DEPRECATED !!*/
-	"%B":      PsmlColumnInfo{Field: "%B", Short: "Cuml Bytes", Long: "Cumulative Bytes", Comparator: table.IntCompare{}},                        /* 5) COL_CUMULATIVE_BYTES */
-	"%Cus":    PsmlColumnInfo{Field: "%Cus", Short: "Custom", Long: "Custom"},                                                                    /* 6) COL_CUSTOM */
-	"%y":      PsmlColumnInfo{Field: "%y", Short: "DCE/RPC", Long: "DCE/RPC call (cn_call_id / dg_seqnum)", Comparator: table.IntCompare{}},      /* 7) COL_DCE_CALL */
-	"%Tt":     PsmlColumnInfo{Field: "%Tt", Short: "Time Delt", Long: "Delta time", Comparator: table.FloatCompare{}},                            /* 8) COL_DELTA_TIME */
-	"%Gt":     PsmlColumnInfo{Field: "%Gt", Short: "Time Delt", Long: "Delta time displayed", Comparator: table.FloatCompare{}},                  /* 9) COL_DELTA_TIME_DIS */
-	"%rd":     PsmlColumnInfo{Field: "%rd", Short: "Dest", Long: "Dest addr (resolved)"},                                                         /* 10) COL_RES_DST */
-	"%ud":     PsmlColumnInfo{Field: "%ud", Short: "Dest", Long: "Dest addr (unresolved)", Comparator: termshark.IPCompare{}},                    /* 11) COL_UNRES_DST */
-	"%rD":     PsmlColumnInfo{Field: "%rD", Short: "DPort", Long: "Dest port (resolved)"},                                                        /* 12) COL_RES_DST_PORT */
-	"%uD":     PsmlColumnInfo{Field: "%uD", Short: "DPort", Long: "Dest port (unresolved)", Comparator: table.IntCompare{}},                      /* 13) COL_UNRES_DST_PORT */
-	"%d":      PsmlColumnInfo{Field: "%d", Short: "Dest", Long: "Destination address"},                                                           /* 14) COL_DEF_DST */
-	"%D":      PsmlColumnInfo{Field: "%D", Short: "DPort", Long: "Destination port", Comparator: table.IntCompare{}},                             /* 15) COL_DEF_DST_PORT */
-	"%a":      PsmlColumnInfo{Field: "%a", Short: "Expert", Long: "Expert Info Severity"},                                                        /* 16) COL_EXPERT */
-	"%I":      PsmlColumnInfo{Field: "%I", Short: "FW-1", Long: "FW-1 monitor if/direction"},                                                     /* 17) COL_IF_DIR */
-	"%F":      PsmlColumnInfo{Field: "%F", Short: "Freq/Chan", Long: "Frequency/Channel", Comparator: table.IntCompare{}},                        /* 18) COL_FREQ_CHAN */
-	"%hd":     PsmlColumnInfo{Field: "%hd", Short: "DMAC", Long: "Hardware dest addr"},                                                           /* 19) COL_DEF_DL_DST */
-	"%hs":     PsmlColumnInfo{Field: "%hs", Short: "SMAC", Long: "Hardware src addr"},                                                            /* 20) COL_DEF_DL_SRC */
-	"%rhd":    PsmlColumnInfo{Field: "%rhd", Short: "DMAC", Long: "Hw dest addr (resolved)"},                                                     /* 21) COL_RES_DL_DST */
-	"%uhd":    PsmlColumnInfo{Field: "%uhd", Short: "DMAC", Long: "Hw dest addr (unresolved)"},                                                   /* 22) COL_UNRES_DL_DST */
-	"%rhs":    PsmlColumnInfo{Field: "%rhs", Short: "SMAC", Long: "Hw src addr (resolved)"},                                                      /* 23) COL_RES_DL_SRC*/
-	"%uhs":    PsmlColumnInfo{Field: "%uhs", Short: "SMAC", Long: "Hw src addr (unresolved)"},                                                    /* 24) COL_UNRES_DL_SRC */
-	"%e":      PsmlColumnInfo{Field: "%e", Short: "RSSI", Long: "IEEE 802.11 RSSI", Comparator: table.FloatCompare{}},                            /* 25) COL_RSSI */
-	"%x":      PsmlColumnInfo{Field: "%x", Short: "TX Rate", Long: "IEEE 802.11 TX rate", Comparator: table.FloatCompare{}},                      /* 26) COL_TX_RATE */
-	"%f":      PsmlColumnInfo{Field: "%f", Short: "DSCP", Long: "IP DSCP Value"},                                                                 /* 27) COL_DSCP_VALUE */
-	"%i":      PsmlColumnInfo{Field: "%i", Short: "Info", Long: "Information"},                                                                   /* 28) COL_INFO */
-	"%rnd":    PsmlColumnInfo{Field: "%rnd", Short: "Dest", Long: "Net dest addr (resolved)"},                                                    /* 29) COL_RES_NET_DST */
-	"%und":    PsmlColumnInfo{Field: "%und", Short: "Dest", Long: "Net dest addr (unresolved)", Comparator: termshark.IPCompare{}},               /* 30) COL_UNRES_NET_DST */
-	"%rns":    PsmlColumnInfo{Field: "%rns", Short: "Source", Long: "Net src addr (resolved)"},                                                   /* 31) COL_RES_NET_SRC */
-	"%uns":    PsmlColumnInfo{Field: "%uns", Short: "Source", Long: "Net src addr (unresolved)", Comparator: termshark.IPCompare{}},              /* 32) COL_UNRES_NET_SRC */
-	"%nd":     PsmlColumnInfo{Field: "%nd", Short: "Dest", Long: "Network dest addr"},                                                            /* 33) COL_DEF_NET_DST */
-	"%ns":     PsmlColumnInfo{Field: "%ns", Short: "Dest", Long: "Network src addr"},                                                             /* 34) COL_DEF_NET_SRC */
-	"%m":      PsmlColumnInfo{Field: "%m", Short: "No.", Long: "Number", Comparator: table.IntCompare{}},                                         /* 35) COL_NUMBER */
-	"%L":      PsmlColumnInfo{Field: "%L", Short: "Length", Long: "Packet length (bytes)", Comparator: table.IntCompare{}},                       /* 36) COL_PACKET_LENGTH */
-	"%p":      PsmlColumnInfo{Field: "%p", Short: "Proto", Long: "Protocol"},                                                                     /* 37) COL_PROTOCOL */ // IGMPv3, NBNS, TLSv1.3
-	"%Rt":     PsmlColumnInfo{Field: "%Rt", Short: "Time", Long: "Relative time", Comparator: table.FloatCompare{}},                              /* 38) COL_REL_TIME */ // 5.961798653
-	"%s":      PsmlColumnInfo{Field: "%s", Short: "Source", Long: "Source address", Comparator: termshark.IPCompare{}},                           /* 39) COL_DEF_SRC */
-	"%S":      PsmlColumnInfo{Field: "%S", Short: "SPort", Long: "Source port", Comparator: table.IntCompare{}},                                  /* 40) COL_DEF_SRC_PORT */
-	"%rs":     PsmlColumnInfo{Field: "%rs", Short: "Source", Long: "Src addr (resolved)"},                                                        /* 41) COL_RES_SRC */
-	"%us":     PsmlColumnInfo{Field: "%us", Short: "Source", Long: "Src addr (unresolved)", Comparator: termshark.IPCompare{}},                   /* 42) COL_UNRES_SRC */
-	"%rS":     PsmlColumnInfo{Field: "%rS", Short: "SPort", Long: "Src port (resolved)"},                                                         /* 43) COL_RES_SRC_PORT */
-	"%uS":     PsmlColumnInfo{Field: "%uS", Short: "SPort", Long: "Src port (unresolved)", Comparator: table.IntCompare{}},                       /* 44) COL_UNRES_SRC_PORT */
-	"%E":      PsmlColumnInfo{Field: "%E", Short: "TEI", Long: "TEI", Comparator: table.IntCompare{}},                                            /* 45) COL_TEI */
-	"%Yut":    PsmlColumnInfo{Field: "%Yut", Short: "Time", Long: "UTC date, as YYYY-MM-DD, and time", Comparator: table.DateTimeCompare{}},      /* 46) COL_UTC_YMD_TIME */
-	"%YDOYut": PsmlColumnInfo{Field: "%YDOYut", Short: "Time", Long: "UTC date, as YYYY/DOY, and time", Comparator: table.DateTimeCompare{}},     /* 47) COL_UTC_YDOY_TIME */
-	"%Aut":    PsmlColumnInfo{Field: "%Aut", Short: "Time", Long: "UTC time", Comparator: table.DateTimeCompare{}},                               /* 48) COL_UTC_TIME */
-	"%t":      PsmlColumnInfo{Field: "%t", Short: "Time", Long: "Time (format as specified)", Comparator: table.DateTimeCompare{}},               /* 49) COL_CLS_TIME */ // 6916.185051
+	"%q":      {Field: "%q", Short: "VLAN", Long: "802.1Q VLAN id", Comparator: table.IntCompare{}},                                /* 0) COL_8021Q_VLAN_ID */
+	"%Yt":     {Field: "%Yt", Short: "Time", Long: "Absolute date, as YYYY-MM-DD, and time", Comparator: table.DateTimeCompare{}},  /* 1) COL_ABS_YMD_TIME */
+	"%YDOYt":  {Field: "%YDOYt", Short: "Time", Long: "Absolute date, as YYYY/DOY, and time", Comparator: table.DateTimeCompare{}}, /* 2) COL_ABS_YDOY_TIME */
+	"%At":     {Field: "%At", Short: "Time", Long: "Absolute time", Comparator: table.DateTimeCompare{}},                           /* 3) COL_ABS_TIME */
+	"%V":      {Field: "%V", Short: "VSAN", Long: "Cisco VSAN"},                                                                    /* 4) COL_VSAN - !! DEPRECATED !!*/
+	"%B":      {Field: "%B", Short: "Cuml Bytes", Long: "Cumulative Bytes", Comparator: table.IntCompare{}},                        /* 5) COL_CUMULATIVE_BYTES */
+	"%Cus":    {Field: "%Cus", Short: "Custom", Long: "Custom"},                                                                    /* 6) COL_CUSTOM */
+	"%y":      {Field: "%y", Short: "DCE/RPC", Long: "DCE/RPC call (cn_call_id / dg_seqnum)", Comparator: table.IntCompare{}},      /* 7) COL_DCE_CALL */
+	"%Tt":     {Field: "%Tt", Short: "Time Delt", Long: "Delta time", Comparator: table.FloatCompare{}},                            /* 8) COL_DELTA_TIME */
+	"%Gt":     {Field: "%Gt", Short: "Time Delt", Long: "Delta time displayed", Comparator: table.FloatCompare{}},                  /* 9) COL_DELTA_TIME_DIS */
+	"%rd":     {Field: "%rd", Short: "Dest", Long: "Dest addr (resolved)"},                                                         /* 10) COL_RES_DST */
+	"%ud":     {Field: "%ud", Short: "Dest", Long: "Dest addr (unresolved)", Comparator: termshark.IPCompare{}},                    /* 11) COL_UNRES_DST */
+	"%rD":     {Field: "%rD", Short: "DPort", Long: "Dest port (resolved)"},                                                        /* 12) COL_RES_DST_PORT */
+	"%uD":     {Field: "%uD", Short: "DPort", Long: "Dest port (unresolved)", Comparator: table.IntCompare{}},                      /* 13) COL_UNRES_DST_PORT */
+	"%d":      {Field: "%d", Short: "Dest", Long: "Destination address"},                                                           /* 14) COL_DEF_DST */
+	"%D":      {Field: "%D", Short: "DPort", Long: "Destination port", Comparator: table.IntCompare{}},                             /* 15) COL_DEF_DST_PORT */
+	"%a":      {Field: "%a", Short: "Expert", Long: "Expert Info Severity"},                                                        /* 16) COL_EXPERT */
+	"%I":      {Field: "%I", Short: "FW-1", Long: "FW-1 monitor if/direction"},                                                     /* 17) COL_IF_DIR */
+	"%F":      {Field: "%F", Short: "Freq/Chan", Long: "Frequency/Channel", Comparator: table.IntCompare{}},                        /* 18) COL_FREQ_CHAN */
+	"%hd":     {Field: "%hd", Short: "DMAC", Long: "Hardware dest addr"},                                                           /* 19) COL_DEF_DL_DST */
+	"%hs":     {Field: "%hs", Short: "SMAC", Long: "Hardware src addr"},                                                            /* 20) COL_DEF_DL_SRC */
+	"%rhd":    {Field: "%rhd", Short: "DMAC", Long: "Hw dest addr (resolved)"},                                                     /* 21) COL_RES_DL_DST */
+	"%uhd":    {Field: "%uhd", Short: "DMAC", Long: "Hw dest addr (unresolved)"},                                                   /* 22) COL_UNRES_DL_DST */
+	"%rhs":    {Field: "%rhs", Short: "SMAC", Long: "Hw src addr (resolved)"},                                                      /* 23) COL_RES_DL_SRC*/
+	"%uhs":    {Field: "%uhs", Short: "SMAC", Long: "Hw src addr (unresolved)"},                                                    /* 24) COL_UNRES_DL_SRC */
+	"%e":      {Field: "%e", Short: "RSSI", Long: "IEEE 802.11 RSSI", Comparator: table.FloatCompare{}},                            /* 25) COL_RSSI */
+	"%x":      {Field: "%x", Short: "TX Rate", Long: "IEEE 802.11 TX rate", Comparator: table.FloatCompare{}},                      /* 26) COL_TX_RATE */
+	"%f":      {Field: "%f", Short: "DSCP", Long: "IP DSCP Value"},                                                                 /* 27) COL_DSCP_VALUE */
+	"%i":      {Field: "%i", Short: "Info", Long: "Information"},                                                                   /* 28) COL_INFO */
+	"%rnd":    {Field: "%rnd", Short: "Dest", Long: "Net dest addr (resolved)"},                                                    /* 29) COL_RES_NET_DST */
+	"%und":    {Field: "%und", Short: "Dest", Long: "Net dest addr (unresolved)", Comparator: termshark.IPCompare{}},               /* 30) COL_UNRES_NET_DST */
+	"%rns":    {Field: "%rns", Short: "Source", Long: "Net src addr (resolved)"},                                                   /* 31) COL_RES_NET_SRC */
+	"%uns":    {Field: "%uns", Short: "Source", Long: "Net src addr (unresolved)", Comparator: termshark.IPCompare{}},              /* 32) COL_UNRES_NET_SRC */
+	"%nd":     {Field: "%nd", Short: "Dest", Long: "Network dest addr"},                                                            /* 33) COL_DEF_NET_DST */
+	"%ns":     {Field: "%ns", Short: "Dest", Long: "Network src addr"},                                                             /* 34) COL_DEF_NET_SRC */
+	"%m":      {Field: "%m", Short: "No.", Long: "Number", Comparator: table.IntCompare{}},                                         /* 35) COL_NUMBER */
+	"%L":      {Field: "%L", Short: "Length", Long: "Packet length (bytes)", Comparator: table.IntCompare{}},                       /* 36) COL_PACKET_LENGTH */
+	"%p":      {Field: "%p", Short: "Proto", Long: "Protocol"},                                                                     /* 37) COL_PROTOCOL */ // IGMPv3, NBNS, TLSv1.3
+	"%Rt":     {Field: "%Rt", Short: "Time", Long: "Relative time", Comparator: table.FloatCompare{}},                              /* 38) COL_REL_TIME */ // 5.961798653
+	"%s":      {Field: "%s", Short: "Source", Long: "Source address", Comparator: termshark.IPCompare{}},                           /* 39) COL_DEF_SRC */
+	"%S":      {Field: "%S", Short: "SPort", Long: "Source port", Comparator: table.IntCompare{}},                                  /* 40) COL_DEF_SRC_PORT */
+	"%rs":     {Field: "%rs", Short: "Source", Long: "Src addr (resolved)"},                                                        /* 41) COL_RES_SRC */
+	"%us":     {Field: "%us", Short: "Source", Long: "Src addr (unresolved)", Comparator: termshark.IPCompare{}},                   /* 42) COL_UNRES_SRC */
+	"%rS":     {Field: "%rS", Short: "SPort", Long: "Src port (resolved)"},                                                         /* 43) COL_RES_SRC_PORT */
+	"%uS":     {Field: "%uS", Short: "SPort", Long: "Src port (unresolved)", Comparator: table.IntCompare{}},                       /* 44) COL_UNRES_SRC_PORT */
+	"%E":      {Field: "%E", Short: "TEI", Long: "TEI", Comparator: table.IntCompare{}},                                            /* 45) COL_TEI */
+	"%Yut":    {Field: "%Yut", Short: "Time", Long: "UTC date, as YYYY-MM-DD, and time", Comparator: table.DateTimeCompare{}},      /* 46) COL_UTC_YMD_TIME */
+	"%YDOYut": {Field: "%YDOYut", Short: "Time", Long: "UTC date, as YYYY/DOY, and time", Comparator: table.DateTimeCompare{}},     /* 47) COL_UTC_YDOY_TIME */
+	"%Aut":    {Field: "%Aut", Short: "Time", Long: "UTC time", Comparator: table.DateTimeCompare{}},                               /* 48) COL_UTC_TIME */
+	"%t":      {Field: "%t", Short: "Time", Long: "Time (format as specified)", Comparator: table.DateTimeCompare{}},               /* 49) COL_CLS_TIME */ // 6916.185051
 }
 
 var cachedPsmlColumnFormat []PsmlColumnSpec
@@ -348,9 +348,3 @@ func getPsmlColumnFormatWithoutLock(colKey string) []PsmlColumnSpec {
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

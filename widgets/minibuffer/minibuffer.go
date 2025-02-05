@@ -132,14 +132,14 @@ func New() *Widget {
 	editW := edit.New(edit.Options{
 		Caption: ":",
 	})
-	editW.OnTextSet(gowid.MakeWidgetCallback("cb", gowid.WidgetChangedFunction(func(app gowid.IApp, ew gowid.IWidget) {
+	editW.OnTextSet(gowid.MakeWidgetCallback("cb", func(app gowid.IApp, ew gowid.IWidget) {
 		res.updateCompletions(app)
-	})))
+	}))
 
 	// If the cursor pos changes, we might not be displaying the right set of completions
-	editW.OnCursorPosSet(gowid.MakeWidgetCallback("cb", gowid.WidgetChangedFunction(func(app gowid.IApp, ew gowid.IWidget) {
+	editW.OnCursorPosSet(gowid.MakeWidgetCallback("cb", func(app gowid.IApp, ew gowid.IWidget) {
 		res.updateCompletions(app)
-	})))
+	}))
 
 	top := holder.New(nullw)
 	bottom := hpadding.New(editW, gowid.HAlignLeft{}, gowid.RenderFlow{})
@@ -348,7 +348,7 @@ func (w *Widget) getPartialsCompletions(checkOffer bool, app gowid.IApp) []parti
 				// fake match - this is so the correct completion is displayed in the following situation:
 				// "set   dark-mode"
 				// "    ^          "
-				wordMatchesS = append(wordMatchesS[0:wordIdx], append([][]string{{"", "", ""}}, wordMatchesS[wordIdx:len(wordMatchesS)]...)...)
+				wordMatchesS = append(wordMatchesS[0:wordIdx], append([][]string{{"", "", ""}}, wordMatchesS[wordIdx:]...)...)
 				wordStart = cp
 				wordEnd = cp
 			}
@@ -378,7 +378,7 @@ func (w *Widget) getPartialsCompletions(checkOffer bool, app gowid.IApp) []parti
 							word:   compl,
 							qword:  qcompl,
 							before: txt[0:wordStart],
-							after:  txt[wordEnd:len(txt)],
+							after:  txt[wordEnd:],
 						})
 					}
 				}
@@ -387,7 +387,7 @@ func (w *Widget) getPartialsCompletions(checkOffer bool, app gowid.IApp) []parti
 	} else {
 		// This is the first word matching
 		keys := make([]string, 0, len(w.actions))
-		for k, _ := range w.actions {
+		for k := range w.actions {
 			keys = append(keys, k)
 		}
 		sort.Strings(keys)
@@ -474,9 +474,3 @@ func Open(w *Widget, container gowid.ISettableComposite, width gowid.IWidgetDime
 	container.SetSubWidget(w.ov, app)
 	w.SetOpen(true, app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

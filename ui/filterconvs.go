@@ -138,9 +138,3 @@ func makeFilterConvs2MenuWidget() gowid.IWidget {
 
 	return convListBox
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

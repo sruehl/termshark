@@ -23,9 +23,9 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/gdamore/tcell/v2"
-	flags "github.com/jessevdk/go-flags"
+	"github.com/jessevdk/go-flags"
 	"github.com/mattn/go-isatty"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/shibukawa/configdir"
 	"github.com/sruehl/gowid"
 
@@ -79,7 +79,7 @@ func main() {
 	for _, e := range termshark.OriginalEnv {
 		ks := strings.SplitN(e, "=", 2)
 		if len(ks) == 2 {
-			os.Setenv(ks[0], ks[1])
+			_ = os.Setenv(ks[0], ks[1])
 		}
 	}
 
@@ -91,11 +91,11 @@ func main() {
 
 	switch {
 	case termshark.ShouldSwitchTerminal:
-		os.Setenv("TERMSHARK_ORIGINAL_TERM", os.Getenv("TERM"))
-		os.Setenv("TERM", fmt.Sprintf("%s-256color", os.Getenv("TERM")))
+		_ = os.Setenv("TERMSHARK_ORIGINAL_TERM", os.Getenv("TERM"))
+		_ = os.Setenv("TERM", fmt.Sprintf("%s-256color", os.Getenv("TERM")))
 	case termshark.ShouldSwitchBack:
-		os.Setenv("TERM", os.Getenv("TERMSHARK_ORIGINAL_TERM"))
-		os.Setenv("TERMSHARK_ORIGINAL_TERM", "")
+		_ = os.Setenv("TERM", os.Getenv("TERMSHARK_ORIGINAL_TERM"))
+		_ = os.Setenv("TERMSHARK_ORIGINAL_TERM", "")
 	}
 
 	// Need exec because we really need to re-initialize everything, including have
@@ -142,20 +142,20 @@ func cmain() int {
 	stdConf := configdir.New("", "termshark")
 	dirs := stdConf.QueryFolders(configdir.Cache)
 	if err := dirs[0].CreateParentDir("dummy"); err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: could not create cache dir: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Warning: could not create cache dir: %v\n", err)
 	}
 	dirs = stdConf.QueryFolders(configdir.Global)
 	if err := dirs[0].CreateParentDir("dummy"); err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: could not create config dir: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Warning: could not create config dir: %v\n", err)
 	} else {
 		if err = os.MkdirAll(filepath.Join(dirs[0].Path, "profiles"), 0755); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: could not create profiles dir: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Warning: could not create profiles dir: %v\n", err)
 		}
 	}
 
 	err := profiles.ReadDefaultConfig(dirs[0].Path)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, fmt.Sprintf("%s\n", err.Error()))
+		_, _ = fmt.Fprintf(os.Stderr, fmt.Sprintf("%s\n", err.Error()))
 	}
 
 	// Used to determine if we should run tshark instead e.g. stdout is not a tty
@@ -187,7 +187,7 @@ func cmain() int {
 	if tsopts.TailFileValue() != "" {
 		err = tailfile.Tail(tsopts.TailFileValue())
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Error: %v", err)
 			return 1
 		} else {
 			return 0
@@ -198,7 +198,7 @@ func cmain() int {
 	// provides a non-existent profile name, it should be an error, just as for Wireshark.
 	if tsopts.Profile != "" {
 		if err = profiles.Use(tsopts.Profile); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			return 1
 		}
 	}
@@ -227,11 +227,11 @@ func cmain() int {
 
 		tsharkBin, kverr := termshark.TSharkPath()
 		if kverr != nil {
-			fmt.Fprintf(os.Stderr, kverr.KeyVals["msg"].(string))
+			_, _ = fmt.Fprintf(os.Stderr, kverr.KeyVals["msg"].(string))
 			return 1
 		}
 
-		args := []string{}
+		var args []string
 		for _, arg := range os.Args[1:] {
 			if !termshark.StringInSlice(arg, cli.TermsharkOnly) && !termshark.StringIsArgPrefixOf(arg, cli.TermsharkOnly) {
 				args = append(args, arg)
@@ -242,7 +242,7 @@ func cmain() int {
 		if runtime.GOOS != "windows" {
 			err = syscall.Exec(tsharkBin, args, os.Environ())
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error execing tshark binary: %v\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "Error execing tshark binary: %v\n", err)
 				return 1
 			}
 		} else {
@@ -253,13 +253,13 @@ func cmain() int {
 
 			err = c.Start()
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error starting tshark: %v\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "Error starting tshark: %v\n", err)
 				return 1
 			}
 
 			err = c.Wait()
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error waiting for tshark: %v\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "Error waiting for tshark: %v\n", err)
 				return 1
 			}
 
@@ -276,7 +276,7 @@ func cmain() int {
 	filterArgs, err = tmFlags.Parse()
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Command-line error: %v\n\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Command-line error: %v\n\n", err)
 		ui.WriteHelp(tmFlags, os.Stderr)
 		return 1
 	}
@@ -291,11 +291,11 @@ func cmain() int {
 		ui.WriteVersion(tmFlags, os.Stdout)
 		if len(opts.Version) > 1 {
 			if tsharkBin, kverr := termshark.TSharkPath(); kverr != nil {
-				fmt.Fprintf(os.Stderr, kverr.KeyVals["msg"].(string))
+				_, _ = fmt.Fprintf(os.Stderr, kverr.KeyVals["msg"].(string))
 				res = 1
 			} else {
 				if ver, err := termshark.TSharkVersion(tsharkBin); err != nil {
-					fmt.Fprintf(os.Stderr, "Could not determine version of tshark from binary %s\n", tsharkBin)
+					_, _ = fmt.Fprintf(os.Stderr, "Could not determine version of tshark from binary %s\n", tsharkBin)
 					res = 1
 				} else {
 					ui.WriteTsharkVersion(tmFlags, tsharkBin, ver, os.Stdout)
@@ -308,15 +308,15 @@ func cmain() int {
 	usetty := opts.TtyValue()
 	if usetty != "" {
 		if ttyf, err := os.Open(usetty); err != nil {
-			fmt.Fprintf(os.Stderr, "Could not open terminal %s: %v.\n", usetty, err)
+			_, _ = fmt.Fprintf(os.Stderr, "Could not open terminal %s: %v.\n", usetty, err)
 			return 1
 		} else {
 			if !isatty.IsTerminal(ttyf.Fd()) {
-				fmt.Fprintf(os.Stderr, "%s is not a terminal.\n", usetty)
-				ttyf.Close()
+				_, _ = fmt.Fprintf(os.Stderr, "%s is not a terminal.\n", usetty)
+				_ = ttyf.Close()
 				return 1
 			}
-			ttyf.Close()
+			_ = ttyf.Close()
 		}
 	} else {
 		// Always override - in case the user has GOWID_TTY in a shell script (if they're
@@ -329,8 +329,8 @@ func cmain() int {
 	// terminal emumlator supports 256 colors.
 	termVar := profiles.ConfString("main.term", "")
 	if termVar != "" {
-		fmt.Fprintf(os.Stderr, "Configuration file overrides TERM setting, using TERM=%s\n", termVar)
-		os.Setenv("TERM", termVar)
+		_, _ = fmt.Fprintf(os.Stderr, "Configuration file overrides TERM setting, using TERM=%s\n", termVar)
+		_ = os.Setenv("TERM", termVar)
 	}
 
 	var psrcs []pcap.IPacketSource
@@ -339,7 +339,7 @@ func cmain() int {
 		for _, psrc := range psrcs {
 			if psrc != nil {
 				if remover, ok := psrc.(pcap.ISourceRemover); ok {
-					remover.Remove()
+					_ = remover.Remove()
 				}
 			}
 		}
@@ -350,7 +350,7 @@ func cmain() int {
 	// If no interface specified, and no pcap specified via -r, then we assume the first
 	// argument is a pcap file e.g. termshark foo.pcap
 	if pcapf == "" && len(opts.Ifaces) == 0 {
-		pcapf = string(opts.Args.FilterOrPcap)
+		pcapf = opts.Args.FilterOrPcap
 		// `termshark` => `termshark -i 1` (livecapture on default interface if no args)
 		if pcapf == "" {
 			if termshark.IsTerminal(os.Stdin.Fd()) {
@@ -389,7 +389,7 @@ func cmain() int {
 	}
 
 	if pcapf != "" && len(opts.Ifaces) > 0 {
-		fmt.Fprintf(os.Stderr, "Please supply either a pcap or one or more live captures.\n")
+		_, _ = fmt.Fprintf(os.Stderr, "Please supply either a pcap or one or more live captures.\n")
 		return 1
 	}
 
@@ -413,20 +413,20 @@ func cmain() int {
 		switch {
 		case psrc.Name() == "-":
 			if haveStdin {
-				fmt.Fprintf(os.Stderr, "Requested live capture %v (\"stdin\") cannot be supplied more than once.\n", psrc.Name())
+				_, _ = fmt.Fprintf(os.Stderr, "Requested live capture %v (\"stdin\") cannot be supplied more than once.\n", psrc.Name())
 				return 1
 			}
 
 			if termshark.IsTerminal(os.Stdin.Fd()) {
-				fmt.Fprintf(os.Stderr, "Requested live capture is %v (\"stdin\") but stdin is a tty.\n", psrc.Name())
-				fmt.Fprintf(os.Stderr, "Perhaps you intended to pipe packet input to termshark?\n")
+				_, _ = fmt.Fprintf(os.Stderr, "Requested live capture is %v (\"stdin\") but stdin is a tty.\n", psrc.Name())
+				_, _ = fmt.Fprintf(os.Stderr, "Perhaps you intended to pipe packet input to termshark?\n")
 				return 1
 			}
 			if runtime.GOOS != "windows" {
 				psrcs[pi] = pcap.PipeSource{Descriptor: "/dev/fd/0", Fd: int(os.Stdin.Fd())}
 				haveStdin = true
 			} else {
-				fmt.Fprintf(os.Stderr, "Sorry, termshark does not yet support piped input on Windows.\n")
+				_, _ = fmt.Fprintf(os.Stderr, "Sorry, termshark does not yet support piped input on Windows.\n")
 				return 1
 			}
 		default:
@@ -436,7 +436,7 @@ func cmain() int {
 					// Means this was supplied with -r - since any file sources means there's (a) 1 and (b)
 					// no other sources. So it must stat. Note if we started with -i fifo, this check
 					// isn't done... but it still ought to exist.
-					fmt.Fprintf(os.Stderr, "Error reading file %s: %v.\n", psrc.Name(), err)
+					_, _ = fmt.Fprintf(os.Stderr, "Error reading file %s: %v.\n", psrc.Name(), err)
 					return 1
 				}
 				continue
@@ -451,10 +451,10 @@ func cmain() int {
 					// Do this up front before the UI starts to catch simple errors quickly - like
 					// the file not being readable. It's possible that tshark would be able to read
 					// it and the termshark user not, but unlikely.
-					fmt.Fprintf(os.Stderr, "Error reading file %s: %v.\n", psrc.Name(), err)
+					_, _ = fmt.Fprintf(os.Stderr, "Error reading file %s: %v.\n", psrc.Name(), err)
 					return 1
 				} else {
-					pcapffile.Close()
+					_ = pcapffile.Close()
 				}
 			}
 		}
@@ -464,11 +464,11 @@ func cmain() int {
 	fileSrcs := pcap.FileSystemSources(psrcs)
 	if len(fileSrcs) == 1 {
 		if len(psrcs) > 1 {
-			fmt.Fprintf(os.Stderr, "You can't specify both a pcap and a live capture.\n")
+			_, _ = fmt.Fprintf(os.Stderr, "You can't specify both a pcap and a live capture.\n")
 			return 1
 		}
 	} else if len(fileSrcs) > 1 {
-		fmt.Fprintf(os.Stderr, "You can't specify more than one pcap.\n")
+		_, _ = fmt.Fprintf(os.Stderr, "You can't specify more than one pcap.\n")
 		return 1
 	}
 
@@ -488,7 +488,7 @@ func cmain() int {
 	// Meaning there are only live captures
 	if len(fileSrcs) == 0 && argsFilter != "" {
 		if opts.CaptureFilter != "" {
-			fmt.Fprintf(os.Stderr, "Two capture filters provided - '%s' and '%s' - please supply one only.\n", opts.CaptureFilter, argsFilter)
+			_, _ = fmt.Fprintf(os.Stderr, "Two capture filters provided - '%s' and '%s' - please supply one only.\n", opts.CaptureFilter, argsFilter)
 			return 1
 		}
 		captureFilter = argsFilter
@@ -497,17 +497,17 @@ func cmain() int {
 	// -w something
 	if opts.WriteTo != "" {
 		if len(fileSrcs) > 0 {
-			fmt.Fprintf(os.Stderr, "The -w flag is incompatible with regular capture sources %v\n", fileSrcs)
+			_, _ = fmt.Fprintf(os.Stderr, "The -w flag is incompatible with regular capture sources %v\n", fileSrcs)
 			return 1
 		}
 		if opts.WriteTo == "-" {
-			fmt.Fprintf(os.Stderr, "Cannot set -w to stdout. Target file must be regular or a symlink.\n")
+			_, _ = fmt.Fprintf(os.Stderr, "Cannot set -w to stdout. Target file must be regular or a symlink.\n")
 			return 1
 		}
 		// If the file does not exist, then proceed. If it does exist, check it is something "normal".
 		if _, err = os.Stat(string(opts.WriteTo)); err == nil || !os.IsNotExist(err) {
 			if !system.FileRegularOrLink(string(opts.WriteTo)) {
-				fmt.Fprintf(os.Stderr, "Cannot set -w to %s. Target file must be regular or a symlink.\n", opts.WriteTo)
+				_, _ = fmt.Fprintf(os.Stderr, "Cannot set -w to %s. Target file must be regular or a symlink.\n", opts.WriteTo)
 				return 1
 			}
 		}
@@ -518,12 +518,12 @@ func cmain() int {
 	// Validate supplied filters e.g. no capture filter when reading from file
 	if len(fileSrcs) > 0 {
 		if captureFilter != "" {
-			fmt.Fprintf(os.Stderr, "Cannot use a capture filter when reading from a pcap file - '%s' and '%s'.\n", captureFilter, pcapf)
+			_, _ = fmt.Fprintf(os.Stderr, "Cannot use a capture filter when reading from a pcap file - '%s' and '%s'.\n", captureFilter, pcapf)
 			return 1
 		}
 		if argsFilter != "" {
 			if opts.DisplayFilter != "" {
-				fmt.Fprintf(os.Stderr, "Two display filters provided - '%s' and '%s' - please supply one only.\n", opts.DisplayFilter, argsFilter)
+				_, _ = fmt.Fprintf(os.Stderr, "Two display filters provided - '%s' and '%s' - please supply one only.\n", opts.DisplayFilter, argsFilter)
 				return 1
 			}
 			displayFilter = argsFilter
@@ -537,7 +537,7 @@ func cmain() int {
 		logfile := termshark.CacheFile("termshark.log")
 		logfd, err := os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not create log file %s: %v\n", logfile, err)
+			_, _ = fmt.Fprintf(os.Stderr, "Could not create log file %s: %v\n", logfile, err)
 			return 1
 		}
 		// Don't close it - just let the descriptor be closed at exit. zerolog is used
@@ -566,7 +566,7 @@ func cmain() int {
 		if _, err = os.Stat(dir); os.IsNotExist(err) {
 			err = os.Mkdir(dir, 0777)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Unexpected error making dir %s: %v", dir, err)
+				_, _ = fmt.Fprintf(os.Stderr, "Unexpected error making dir %s: %v", dir, err)
 				return 1
 			}
 		}
@@ -577,14 +577,14 @@ func cmain() int {
 	if _, err := os.Stat(emptyPcap); os.IsNotExist(err) {
 		err = termshark.WriteEmptyPcap(emptyPcap)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not create dummy pcap %s: %v", emptyPcap, err)
+			_, _ = fmt.Fprintf(os.Stderr, "Could not create dummy pcap %s: %v", emptyPcap, err)
 			return 1
 		}
 	}
 
 	tsharkBin, kverr := termshark.TSharkPath()
 	if kverr != nil {
-		fmt.Fprintf(os.Stderr, kverr.KeyVals["msg"].(string))
+		_, _ = fmt.Fprintf(os.Stderr, kverr.KeyVals["msg"].(string))
 		return 1
 	}
 
@@ -596,14 +596,14 @@ func cmain() int {
 	if !termshark.StringInSlice(tsharkBin, valids) {
 		tver, err := termshark.TSharkVersion(tsharkBin)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not determine tshark version: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Could not determine tshark version: %v\n", err)
 			return 1
 		}
 		// This is the earliest version I could determine gives reliable results in termshark.
 		// tshark compiled against tag v1.10.1 doesn't populate the hex view.
 		mver, _ := semver.Make("1.10.2")
 		if tver.LT(mver) {
-			fmt.Fprintf(os.Stderr, "termshark will not operate correctly with a tshark older than %v (found %v)\n", mver, tver)
+			_, _ = fmt.Fprintf(os.Stderr, "termshark will not operate correctly with a tshark older than %v (found %v)\n", mver, tver)
 			return 1
 		}
 
@@ -614,7 +614,7 @@ func cmain() int {
 	// If the last tshark we used isn't the same as the current one, then remove the cached fields
 	// data structure so it can be regenerated.
 	if tsharkBin != profiles.ConfString("main.last-used-tshark", "") {
-		fields.DeleteCachedFields()
+		_ = fields.DeleteCachedFields()
 	}
 
 	// Write out the last-used tshark path. We do this to make the above fields cache be consistent
@@ -665,7 +665,7 @@ func cmain() int {
 			if systemInterfaces == nil {
 				systemInterfaces, err = termshark.Interfaces()
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "Could not enumerate network interfaces: %v\n", err)
+					_, _ = fmt.Fprintf(os.Stderr, "Could not enumerate network interfaces: %v\n", err)
 					return 1
 				}
 			}
@@ -694,7 +694,7 @@ func cmain() int {
 				// have a more meaningful name.
 				psrcs[pi] = pcap.InterfaceSource{Iface: canonicalName}
 			} else {
-				fmt.Fprintf(os.Stderr, "Could not find network interface %s\n", psrc.Name())
+				_, _ = fmt.Fprintf(os.Stderr, "Could not find network interface %s\n", psrc.Name())
 				return 1
 			}
 		}
@@ -702,7 +702,7 @@ func cmain() int {
 
 	watcher, err := confwatcher.New()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Problem constructing config file watcher: %v", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Problem constructing config file watcher: %v", err)
 		return 1
 	}
 	defer watcher.Close()
@@ -721,7 +721,7 @@ func cmain() int {
 		// filter is applied, we can restart - and so that we preserve the
 		// capture at the end of running termshark.
 		if len(pcap.FileSystemSources(psrcs)) == 0 && startedSuccessfully && !ui.WriteToSelected && !ui.WriteToDeleted {
-			fmt.Fprintf(os.Stderr, "Packets read from %s have been saved in %s\n", pcap.SourcesString(psrcs), ifacePcapFilename)
+			_, _ = fmt.Fprintf(os.Stderr, "Packets read from %s have been saved in %s\n", pcap.SourcesString(psrcs), ifacePcapFilename)
 		}
 	}()
 
@@ -735,11 +735,11 @@ func cmain() int {
 	// swallowed by tcell.
 	defer func() {
 		if ifaceExitCode != 0 {
-			fmt.Fprintf(os.Stderr, "Cannot capture on device %s", pcap.SourcesString(psrcs))
+			_, _ = fmt.Fprintf(os.Stderr, "Cannot capture on device %s", pcap.SourcesString(psrcs))
 			if ifaceErr != nil {
-				fmt.Fprintf(os.Stderr, ": %v", ifaceErr)
+				_, _ = fmt.Fprintf(os.Stderr, ": %v", ifaceErr)
 			}
-			fmt.Fprintf(os.Stderr, " (exit code %d)\n", ifaceExitCode)
+			_, _ = fmt.Fprintf(os.Stderr, " (exit code %d)\n", ifaceExitCode)
 			if stderr.Len() != 0 {
 				// The default capture bin is termshark itself, with a special environment
 				// variable set that causes it to try dumpcap, then tshark, in that order (for
@@ -751,14 +751,14 @@ func cmain() int {
 					cbin = "the capture process"
 				}
 
-				fmt.Fprintf(os.Stderr, "Standard error stream from %s:\n", cbin)
-				fmt.Fprintf(os.Stderr, "------\n%s\n------\n", stderr.String())
+				_, _ = fmt.Fprintf(os.Stderr, "Standard error stream from %s:\n", cbin)
+				_, _ = fmt.Fprintf(os.Stderr, "------\n%s\n------\n", stderr.String())
 			}
 			if runtime.GOOS == "linux" && os.Geteuid() != 0 {
-				fmt.Fprintf(os.Stderr, "You might need: sudo setcap cap_net_raw,cap_net_admin+eip %s\n", termshark.PrivilegedBin())
-				fmt.Fprintf(os.Stderr, "Or try running with sudo or as root.\n")
+				_, _ = fmt.Fprintf(os.Stderr, "You might need: sudo setcap cap_net_raw,cap_net_admin+eip %s\n", termshark.PrivilegedBin())
+				_, _ = fmt.Fprintf(os.Stderr, "Or try running with sudo or as root.\n")
 			}
-			fmt.Fprintf(os.Stderr, "See https://termshark.io/no-root for more info.\n")
+			_, _ = fmt.Fprintf(os.Stderr, "See https://termshark.io/no-root for more info.\n")
 		}
 	}()
 
@@ -843,7 +843,7 @@ func cmain() int {
 		// programmatically avoid choosing colors 0-21 for anything termshark needs.
 		if os.Getenv("COLORTERM") != "" && !profiles.ConfBool("main.respect-colorterm", false) {
 			log.Info().Msgf("Pessimistically disabling 24-bit color to avoid conflicts with base16")
-			os.Unsetenv("COLORTERM")
+			_ = os.Unsetenv("COLORTERM")
 		}
 	}
 
@@ -855,25 +855,26 @@ func cmain() int {
 	// error
 	defer func() {
 		if ui.FilterWidget != nil {
-			ui.FilterWidget.Close()
+			_ = ui.FilterWidget.Close()
 		}
 		if ui.SearchWidget != nil {
-			ui.SearchWidget.Close(app)
+			_ = ui.SearchWidget.Close(app)
 		}
 		if ui.CurrentWormholeWidget != nil {
-			ui.CurrentWormholeWidget.Close()
+			_ = ui.CurrentWormholeWidget.Close()
 		}
 		if ui.CurrentColsWidget != nil {
-			ui.CurrentColsWidget.Close()
+			_ = ui.CurrentColsWidget.Close()
 		}
 	}()
 
 	if app, err = ui.Build(usetty); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		// Tcell returns ExitError now because if its internal terminfo DB does not have
 		// a matching entry, it tries to build one with infocmp.
-		if _, ok := termshark.RootCause(err).(*exec.ExitError); ok {
-			fmt.Fprintf(os.Stderr, "Termshark could not recognize your terminal. Try changing $TERM.\n")
+		var exitError *exec.ExitError
+		if errors.As(termshark.RootCause(err), &exitError) {
+			_, _ = fmt.Fprintf(os.Stderr, "Termshark could not recognize your terminal. Try changing $TERM.\n")
 		}
 		return 1
 	}
@@ -900,10 +901,10 @@ func cmain() int {
 			App: app,
 			Fn: func(app gowid.IApp) {
 				if !ui.Running {
-					fmt.Fprintf(os.Stderr, "Invalid filter: %s\n", displayFilter)
+					_, _ = fmt.Fprintf(os.Stderr, "Invalid filter: %s\n", displayFilter)
 					ui.RequestQuit()
 				} else {
-					app.Run(gowid.RunFunction(func(app gowid.IApp) {
+					_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 						ui.OpenError(fmt.Sprintf("Invalid filter: %s", displayFilter), app)
 					}))
 				}
@@ -925,7 +926,7 @@ func cmain() int {
 	// If this message is needed, we want it to appear after the init message for the packet
 	// columns - after InitValidColumns
 	if waitingForPackets {
-		fmt.Fprintf(os.Stderr, fmt.Sprintf("(The termshark UI will start when packets are detected on %s...)\n",
+		_, _ = fmt.Fprintf(os.Stderr, fmt.Sprintf("(The termshark UI will start when packets are detected on %s...)\n",
 			strings.Join(pcap.SourcesNames(psrcs), " or ")))
 	}
 
@@ -935,12 +936,12 @@ func cmain() int {
 		psrc := fileSrcs[0]
 		absfile, err := filepath.Abs(psrc.Name())
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not determine working directory: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Could not determine working directory: %v\n", err)
 			return 1
 		}
 
 		doit := func(app gowid.IApp) {
-			app.Run(gowid.RunFunction(func(app gowid.IApp) {
+			_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 				ui.FilterWidget.SetValue(displayFilter, app)
 			}))
 			ui.RequestLoadPcap(absfile, displayFilter, ui.NoGlobalJump, app)
@@ -975,7 +976,7 @@ func cmain() int {
 		}
 
 		ifValid := func(app gowid.IApp) {
-			app.Run(gowid.RunFunction(func(app gowid.IApp) {
+			_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 				ui.FilterWidget.SetValue(displayFilter, app)
 			}))
 			doLoad(app)
@@ -1050,7 +1051,7 @@ Loop:
 				// we point the loader at the file we wrote to the cache, and redirect all
 				// loads/filters to that now.
 				ui.Loader.TurnOffPipe()
-				app.Run(gowid.RunFunction(func(app gowid.IApp) {
+				_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 					ui.ClearProgressWidgetFor(app, ui.LoaderOwns)
 					ui.SetProgressDeterminateFor(app, ui.LoaderOwns) // always switch back - for pdml (partial) loads of later data.
 				}))
@@ -1092,7 +1093,7 @@ Loop:
 				ui.SetProgressWidget(app)
 				if progCancelTimer == nil {
 					progCancelTimer = time.AfterFunc(time.Duration(100000)*time.Hour, func() {
-						app.Run(gowid.RunFunction(func(app gowid.IApp) {
+						_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 							ui.ClearProgressWidgetFor(app, ui.LoaderOwns)
 							progCancelTimer = nil
 						}))
@@ -1164,7 +1165,7 @@ Loop:
 			if profiles.ConfBool("main.use-tshark-temp-for-pcap-cache", false) {
 				log.Info().Msgf("Termshark does not own the pcap temp dir %s; skipping size check", termshark.PcapDir())
 			} else {
-				termshark.PrunePcapCache()
+				_ = termshark.PrunePcapCache()
 			}
 			checkedPcapCache = true
 
@@ -1183,7 +1184,7 @@ Loop:
 
 			// Go to termshark UI view
 			if err = app.ActivateScreen(); err != nil {
-				fmt.Fprintf(os.Stderr, "Error starting UI: %v\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "Error starting UI: %v\n", err)
 				return 1
 			}
 
@@ -1219,7 +1220,7 @@ Loop:
 								log.Info().Msgf("Must use 8-color mode because 256-color version of TERM=%s unavailable - %v.", os.Getenv("TERM"), err)
 							} else {
 								time.AfterFunc(time.Duration(3)*time.Second, func() {
-									app.Run(gowid.RunFunction(func(app gowid.IApp) {
+									_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 										ui.SuggestSwitchingTerm(app)
 									}))
 								})
@@ -1228,7 +1229,7 @@ Loop:
 					}
 				} else if os.Getenv("TERMSHARK_ORIGINAL_TERM") != "" {
 					time.AfterFunc(time.Duration(3)*time.Second, func() {
-						app.Run(gowid.RunFunction(func(app gowid.IApp) {
+						_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 							ui.IsTerminalLegible(app)
 						}))
 					})
@@ -1251,7 +1252,7 @@ Loop:
 			}()
 
 		case fn := <-opsChan:
-			app.Run(fn)
+			_ = app.Run(fn)
 
 		case <-ui.QuitRequestedChan:
 			ui.QuitRequested = true
@@ -1281,7 +1282,7 @@ Loop:
 
 				// This is not synchronous, but some time after calling this, we'll be suspended.
 				if err := system.StopMyself(); err != nil {
-					fmt.Fprintf(os.Stderr, "Unexpected error issuing SIGSTOP: %v\n", err)
+					_, _ = fmt.Fprintf(os.Stderr, "Unexpected error issuing SIGSTOP: %v\n", err)
 					return 1
 				}
 
@@ -1289,7 +1290,7 @@ Loop:
 				if uiSuspended {
 					// Go to termshark UI view
 					if err = app.ActivateScreen(); err != nil {
-						fmt.Fprintf(os.Stderr, "Error starting UI: %v\n", err)
+						_, _ = fmt.Fprintf(os.Stderr, "Error starting UI: %v\n", err)
 						return 1
 					}
 
@@ -1330,11 +1331,11 @@ Loop:
 		case <-tickChan:
 			// We already know that we are LoadingPdml|LoadingPsml
 			if doprog {
-				app.Run(gowid.RunFunction(func(app gowid.IApp) {
+				_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 					prevProgPercentage = ui.UpdateProgressBarForFile(ui.Loader, prevProgPercentage, app)
 				}))
 			} else {
-				app.Run(gowid.RunFunction(func(app gowid.IApp) {
+				_ = app.Run(gowid.RunFunction(func(app gowid.IApp) {
 					ui.UpdateProgressBarForInterface(ui.Loader.InterfaceLoader, app)
 				}))
 			}
@@ -1369,9 +1370,3 @@ Loop:
 
 	return 0
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

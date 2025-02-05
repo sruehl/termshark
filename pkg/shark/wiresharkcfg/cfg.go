@@ -98,9 +98,3 @@ func (c *Config) String() string {
 	}
 	return strings.Join(res, "\n")
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

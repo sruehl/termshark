@@ -39,9 +39,3 @@ func TestTrackFocus1(t *testing.T) {
 	ftw.Render(gowid.RenderFixed{}, gowid.NotSelected, gwtest.D)
 	assert.Equal(t, false, cbran)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

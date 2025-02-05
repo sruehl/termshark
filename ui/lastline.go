@@ -889,9 +889,3 @@ func (d helpCommand) Arguments(toks []string, app gowid.IApp) []minibuffer.IArg 
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

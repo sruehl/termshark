@@ -13,9 +13,3 @@ func CloseDescriptor(fd int) {
 func FileRegularOrLink(filename string) bool {
 	return true
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

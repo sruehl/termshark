@@ -11,7 +11,7 @@ import (
 
 	"github.com/kballard/go-shellquote"
 	"github.com/pkg/errors"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 )
 
 func (c *Command) PutInNewGroupOnUnix() {

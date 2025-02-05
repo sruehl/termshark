@@ -591,9 +591,3 @@ func (w *Widget) newAsciiFromByte(v byte) *button.Widget {
 		return button.NewBare(w.chrs[int(r)])
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

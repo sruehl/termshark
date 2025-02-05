@@ -47,9 +47,3 @@ var TermsharkOnly = []string{"--pass-thru", "--profile", "--log-tty", "--debug",
 func FlagIsTrue(val string) bool {
 	return val == "true" || val == "yes"
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

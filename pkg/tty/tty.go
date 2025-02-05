@@ -76,9 +76,3 @@ failed:
 	}
 	return err
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

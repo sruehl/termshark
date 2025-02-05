@@ -8,7 +8,7 @@ package ui
 import (
 	"fmt"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 
 	"github.com/sruehl/termshark/v2/pkg/theme"
@@ -148,9 +148,3 @@ func tomlCol(key string, layer theme.Layer, hue string) gowid.IColor {
 
 	return gowid.ColorBlack
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -66,9 +66,3 @@ func (w *Widget) Selectable() bool {
 func (w *Widget) String() string {
 	return fmt.Sprintf("expander[%v]", w.w.IWidget)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -139,7 +139,7 @@ func (w *Widget) Render(size gowid.IRenderSize, focus gowid.Selector, app gowid.
 // Use charset [a-f0-9] to mirror tshark -x/xxd hex output
 const charset = "abcdef0123456789"
 
-var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 func randomStringWithCharset(length int, charset string) string {
 	b := make([]byte, length)
@@ -160,9 +160,3 @@ func reverseString(s string) (result string) {
 	}
 	return
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

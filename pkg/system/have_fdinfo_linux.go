@@ -5,9 +5,3 @@
 package system
 
 const HaveFdinfo = true
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

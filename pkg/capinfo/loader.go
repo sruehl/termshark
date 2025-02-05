@@ -7,11 +7,12 @@ package capinfo
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os/exec"
 	"sync"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 
 	"github.com/sruehl/termshark/v2"
@@ -122,7 +123,8 @@ func (c *Loader) loadCapinfoAsync(pcapf string, app gowid.IApp, cb ICapinfoCallb
 			case err = <-termChan:
 				state = pcap.Terminated
 				if !c.SuppressErrors && err != nil {
-					if _, ok := err.(*exec.ExitError); ok {
+					var exitError *exec.ExitError
+					if errors.As(err, &exitError) {
 						pcap.HandleError(pcap.CapinfoCode, app, pcap.MakeUsefulError(c.capinfoCmd, err), cb)
 					}
 				}
@@ -191,9 +193,3 @@ func (c *Loader) loadCapinfoAsync(pcapf string, app gowid.IApp, cb ICapinfoCallb
 
 	c.capinfoCancelFn()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

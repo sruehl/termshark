@@ -254,9 +254,3 @@ func (w *Widget) RenderSize(size gowid.IRenderSize, focus gowid.Selector, app go
 func (w *Widget) Selectable() bool {
 	return w.w.Selectable()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -31,9 +31,3 @@ func (p PaletteSwitcher) RangeOverPalette(f func(key string, value gowid.ICellSt
 		p.P2.RangeOverPalette(f)
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

@@ -205,9 +205,3 @@ func OpenPleaseWait(container gowid.ISettableComposite, app gowid.IApp) {
 func ClosePleaseWait(app gowid.IApp) {
 	PleaseWait.Close(app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

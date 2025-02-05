@@ -23,9 +23,3 @@ type TailSwitch struct {
 func (t TailSwitch) TailFileValue() string {
 	return string(t.Tail)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

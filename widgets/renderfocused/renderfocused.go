@@ -48,9 +48,3 @@ func (w *Widget) UserInput(ev interface{}, size gowid.IRenderSize, focus gowid.S
 func (w *Widget) Selectable() bool {
 	return w.IWidget.Selectable()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

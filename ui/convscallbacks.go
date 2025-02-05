@@ -89,9 +89,3 @@ func (t *convsParseHandler) AfterEnd(code pcap.HandlerCode, app gowid.IApp) {
 	}))
 	close(t.stop)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

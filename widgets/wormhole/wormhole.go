@@ -9,13 +9,13 @@ package wormhole
 import (
 	"context"
 	"fmt"
-	log "github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
 
 	"github.com/psanford/wormhole-william/wormhole"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/widgets/button"
 	"github.com/sruehl/gowid/widgets/clicktracker"
@@ -314,9 +314,3 @@ func logError(err error, app gowid.IApp) {
 func UpperBoundOnLength(words int) int {
 	return 3 + (words * (11 + 1))
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

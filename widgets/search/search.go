@@ -942,9 +942,3 @@ func (f *HexSearchValidator) Validate(filter string) {
 		}
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

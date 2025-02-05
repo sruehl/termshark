@@ -17,7 +17,7 @@ import (
 
 //======================================================================
 
-var fdre *regexp.Regexp = regexp.MustCompile(`/dev/fd/([[:digit:]]+)`)
+var fdre = regexp.MustCompile(`/dev/fd/([[:digit:]]+)`)
 
 // DumpcapExt will run dumpcap first, but if it fails, run tshark. Intended as
 // a special case to allow termshark -i <iface> to use dumpcap if possible,

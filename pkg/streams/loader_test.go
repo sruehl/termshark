@@ -1134,9 +1134,3 @@ func TestDecode1(t *testing.T) {
 
 	assert.Equal(t, []int{0, 1, 3, 4, 6, 7}, pt.indices)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

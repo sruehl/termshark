@@ -133,9 +133,3 @@ func (w *Widget) DownPage(num int, size gowid.IRenderSize, app gowid.IApp) {
 		w.makeText()
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

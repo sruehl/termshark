@@ -68,9 +68,3 @@ func (w *Widget) ClearMappings(app gowid.IApp) {
 		delete(w.kmap, k)
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 90
-// End:

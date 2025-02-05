@@ -15,9 +15,3 @@ func (e NotImplementedError) Error() string {
 }
 
 var NotImplemented = NotImplementedError{}
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

@@ -6,11 +6,12 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"time"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/widgets/table"
 
@@ -123,10 +124,9 @@ func (t updatePacketViews) OnError(code pcap.HandlerCode, app gowid.IApp, err er
 	} else {
 		if !profiles.ConfBool("main.suppress-tshark-errors", true) {
 			var errstr string
-			if kverr, ok := err.(gowid.KeyValueError); ok {
+			var kverr gowid.KeyValueError
+			if errors.As(err, &kverr) {
 				errstr = termshark.KeyValueErrorString(kverr)
-			} else {
-				errstr = fmt.Sprintf("%v", err)
 			}
 
 			OpenLongError(errstr, app)
@@ -375,9 +375,3 @@ func (s SetStructWidgets) OnError(code pcap.HandlerCode, app gowid.IApp, err err
 		}
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

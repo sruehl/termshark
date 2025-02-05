@@ -28,9 +28,3 @@ func Tail(file string) error {
 	}
 	return nil
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

@@ -95,10 +95,10 @@ func openNewProfile(app gowid.IApp) {
 
 	openAgainBtn := dialog.Button{
 		Msg: "Ok",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(func(app gowid.IApp, _ gowid.IWidget) {
+		Action: gowid.MakeWidgetCallback("exec", func(app gowid.IApp, _ gowid.IWidget) {
 			redoDialog.Close(app)
 			openCopy()
-		})),
+		}),
 	}
 
 	redoView := framed.NewSpace(invalidWidget)
@@ -160,7 +160,7 @@ func openNewProfile(app gowid.IApp) {
 
 	okBtn := dialog.Button{
 		Msg:    "Ok",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(okFunc)),
+		Action: gowid.MakeWidgetCallback("exec", okFunc),
 	}
 
 	basedOff = fmt.Sprintf("This profile will be based off of %s.", profiles.CurrentName())
@@ -270,9 +270,3 @@ func openNewProfile(app gowid.IApp) {
 
 	openCopy()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

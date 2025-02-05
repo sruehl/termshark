@@ -245,9 +245,3 @@ func (w *PileWidget) RenderBoxMaker(size gowid.IRenderSize, focus gowid.Selector
 	}
 	return pile.RenderBoxMaker(w, size, focus, focusIdx, app, x)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

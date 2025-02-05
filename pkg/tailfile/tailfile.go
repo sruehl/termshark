@@ -18,9 +18,3 @@ func Tail(file string) error {
 	cmd.Stdout = os.Stdout
 	return cmd.Run()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

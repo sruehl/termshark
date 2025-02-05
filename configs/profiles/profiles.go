@@ -324,9 +324,3 @@ func Use(name string) error {
 	currentName = name
 	return nil
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

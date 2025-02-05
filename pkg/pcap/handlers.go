@@ -135,9 +135,3 @@ func handleNewSource(code HandlerCode, app gowid.IApp, cb interface{}) bool {
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

@@ -6,6 +6,7 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"sync"
@@ -13,7 +14,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	lru "github.com/hashicorp/golang-lru"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/gwutil"
 	"github.com/sruehl/gowid/widgets/holder"
@@ -342,10 +343,9 @@ func (t *streamParseHandler) OnError(code pcap.HandlerCode, app gowid.IApp, err 
 		RequestQuit()
 	} else if !profiles.ConfBool("main.suppress-tshark-errors", true) {
 		var errstr string
-		if kverr, ok := err.(gowid.KeyValueError); ok {
+		var kverr gowid.KeyValueError
+		if errors.As(err, &kverr) {
 			errstr = termshark.KeyValueErrorString(kverr)
-		} else {
-			errstr = fmt.Sprintf("%v", err)
 		}
 
 		app.Run(gowid.RunFunction(func(app gowid.IApp) {
@@ -509,9 +509,3 @@ func buildStreamUi() {
 		copyModeEnterKeys,
 	)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

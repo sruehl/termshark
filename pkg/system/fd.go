@@ -25,9 +25,3 @@ func FileRegularOrLink(filename string) bool {
 
 	return fi.Mode().IsRegular() || (fi.Mode()&os.ModeSymlink != 0)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

@@ -763,13 +763,13 @@ type iMatcher interface {
 // A utility to find the regex matching widget within the stream reassembly table
 // widget hierarchy.
 func findMatcher(w gowid.IWidget) iMatcher {
-	res := gowid.FindInHierarchy(w, true, gowid.WidgetPredicate(func(w gowid.IWidget) bool {
+	res := gowid.FindInHierarchy(w, true, func(w gowid.IWidget) bool {
 		var res bool
 		if _, ok := w.(iMatcher); ok {
 			res = true
 		}
 		return res
-	}))
+	})
 
 	if res == nil {
 		return nil
@@ -970,7 +970,7 @@ var _ copymodetable.ITableCopier = rawChunkList{}
 
 // CopyTable is here to implement copymodetable.IRowCopier
 func (c chunkList) CopyRow(rowid table.RowId) []gowid.ICopyResult {
-	hexd := format.HexDump(c.chunks[int(rowid)].StreamData())
+	hexd := format.HexDump(c.chunks[rowid].StreamData())
 
 	return []gowid.ICopyResult{
 		gowid.CopyResult{
@@ -981,7 +981,7 @@ func (c chunkList) CopyRow(rowid table.RowId) []gowid.ICopyResult {
 }
 
 func (c asciiChunkList) CopyRow(rowid table.RowId) []gowid.ICopyResult {
-	prt := format.MakePrintableStringWithNewlines(c.chunks[int(rowid)].StreamData())
+	prt := format.MakePrintableStringWithNewlines(c.chunks[rowid].StreamData())
 
 	return []gowid.ICopyResult{
 		gowid.CopyResult{
@@ -992,7 +992,7 @@ func (c asciiChunkList) CopyRow(rowid table.RowId) []gowid.ICopyResult {
 }
 
 func (c rawChunkList) CopyRow(rowid table.RowId) []gowid.ICopyResult {
-	raw := format.MakeHexStream(c.chunks[int(rowid)].StreamData())
+	raw := format.MakeHexStream(c.chunks[rowid].StreamData())
 
 	return []gowid.ICopyResult{
 		gowid.CopyResult{
@@ -1340,9 +1340,3 @@ func newData(clicker IChunkClicked, ca iClickIsActive, mapper iMapChunkToTableRo
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

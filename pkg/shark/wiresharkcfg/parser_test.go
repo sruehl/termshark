@@ -5289,9 +5289,3 @@ gui.qt.font_name: Liberation Mono,11,-1,5,50,0,0,0,0,0
 		assert.Equal(t, "%Yut", cfg.Lists["gui.column.hidden"][0])
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

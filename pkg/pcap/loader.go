@@ -21,10 +21,10 @@ import (
 	"sync/atomic"
 
 	lru "github.com/hashicorp/golang-lru"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/gwutil"
-	fsnotify "gopkg.in/fsnotify/fsnotify.v1"
+	"gopkg.in/fsnotify/fsnotify.v1"
 
 	"github.com/sruehl/termshark/v2"
 	"github.com/sruehl/termshark/v2/pkg/format"
@@ -450,7 +450,7 @@ func (c *PacketLoader) Reload(filter string, cb interface{}, app gowid.IApp) {
 	c.stopLoadPsml()
 	c.stopLoadPdml()
 
-	OpsChan <- gowid.RunFunction(func(app gowid.IApp) {
+	OpsChan <- func(app gowid.IApp) {
 		c.RenewPsmlLoader()
 		c.RenewPdmlLoader()
 
@@ -465,7 +465,7 @@ func (c *PacketLoader) Reload(filter string, cb interface{}, app gowid.IApp) {
 		log.Info().Msgf("Applying display filter '%s'", filter)
 
 		c.loadPsmlSync(c.InterfaceLoader, c, cb, app)
-	})
+	}
 }
 
 func (c *PacketLoader) LoadPcap(pcap string, displayFilter string, cb interface{}, app gowid.IApp) {
@@ -485,7 +485,7 @@ func (c *PacketLoader) LoadPcap(pcap string, displayFilter string, cb interface{
 		c.stopLoadPdml()
 		c.stopLoadIface()
 
-		OpsChan <- gowid.RunFunction(func(app gowid.IApp) {
+		OpsChan <- func(app gowid.IApp) {
 			c.Renew()
 
 			// This will enable the operation when clear completes
@@ -504,7 +504,7 @@ func (c *PacketLoader) LoadPcap(pcap string, displayFilter string, cb interface{
 
 			log.Info().Msgf("Starting new pcap file load '%s'", pcap)
 			c.loadPsmlSync(nil, c.ParentLoader, cb, app)
-		})
+		}
 	}
 }
 
@@ -538,7 +538,7 @@ func (c *PacketLoader) ClearPcap(cb interface{}) {
 	c.stopLoadPdml()
 
 	// When stop is done, launch the clear and restart
-	OpsChan <- gowid.RunFunction(func(app gowid.IApp) {
+	OpsChan <- func(app gowid.IApp) {
 		// Don't CloseMain - that will stop the interface process too
 		c.loadWasCancelled = false
 		c.RenewPsmlLoader()
@@ -560,7 +560,7 @@ func (c *PacketLoader) ClearPcap(cb interface{}) {
 				HandleError(NoneCode, app, err, cb)
 			}
 		}
-	})
+	}
 }
 
 // Always called from app goroutine context - so don't need to protect for race on cancelfn
@@ -769,7 +769,8 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 		cancelled := atomic.LoadInt32(&pdmlCancelled)
 		if cancelled == 0 {
 			if err != io.EOF {
-				if err, ok := err.(*xml.SyntaxError); !ok || err.Msg != "unexpected EOF" {
+				var err *xml.SyntaxError
+				if !errors.As(err, &err) || err.Msg != "unexpected EOF" {
 					return true
 				}
 			}
@@ -781,7 +782,8 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 		cancelled := atomic.LoadInt32(&pcapCancelled)
 		if cancelled == 0 {
 			if err != io.EOF {
-				if err, ok := err.(*xml.SyntaxError); !ok || err.Msg != "unexpected EOF" {
+				var err *xml.SyntaxError
+				if !errors.As(err, &err) || err.Msg != "unexpected EOF" {
 					return true
 				}
 			}
@@ -807,9 +809,9 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 	// Determine this in main goroutine
 	termshark.TrackedGo(func() {
 
-		ps.MainRun(gowid.RunFunction(func(app gowid.IApp) {
+		ps.MainRun(func(app gowid.IApp) {
 			HandleBegin(PdmlCode, app, cb)
-		}))
+		})
 
 		// This should correctly wait for all resources, no matter where in the process of creating them
 		// an interruption or error occurs
@@ -822,14 +824,14 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 			// that goroutine terminate.
 			p.stage2CancelFn()
 
-			ps.MainRun(gowid.RunFunction(func(app gowid.IApp) {
+			ps.MainRun(func(app gowid.IApp) {
 				close(p.Stage2FinishedChan)
 				HandleEnd(PdmlCode, app, cb)
 
 				p.state = NotLoading
 				p.rowCurrentlyLoading = -1
 				p.stage2CancelFn = nil
-			}))
+			})
 		}(c)
 
 		// Set these before starting the pcap and pdml process goroutines so that
@@ -1155,7 +1157,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 			// Want to preserve invariant - for simplicity - that we only add full loads
 			// to the cache
 
-			ps.MainRun(gowid.RunFunction(func(gowid.IApp) {
+			ps.MainRun(func(gowid.IApp) {
 				// never evict row 0
 				ps.PacketCacheFn().Get(0)
 				if c.highestCachedRow != -1 {
@@ -1178,7 +1180,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 				if row > c.highestCachedRow {
 					c.highestCachedRow = row
 				}
-			}))
+			})
 		}, &c.stage2Wg, Goroutinewg)
 
 		//======================================================================
@@ -1243,7 +1245,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 					break
 				}
 
-				parseResults := re.FindAllStringSubmatch(string(line), -1)
+				parseResults := re.FindAllStringSubmatch(line, -1)
 
 				if len(parseResults) < 1 {
 					packets = append(packets, packet)
@@ -1261,7 +1263,7 @@ func (c *PdmlLoader) loadPcapSync(row int, visible bool, ps iPdmlLoaderEnv, cb i
 				} else {
 					// Ignore line number
 					for _, parsedByte := range parseResults[1:] {
-						b, err := strconv.ParseUint(string(parsedByte[0][0:2]), 16, 8)
+						b, err := strconv.ParseUint(parsedByte[0][0:2], 16, 8)
 						if err != nil {
 							err = fmt.Errorf("Could not read PCAP packet: %v", err)
 							if !issuedKill {
@@ -1443,20 +1445,20 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 
 	termshark.TrackedGo(func() {
 
-		e.MainRun(gowid.RunFunction(func(app gowid.IApp) {
+		e.MainRun(func(app gowid.IApp) {
 			HandleBegin(PsmlCode, app, cb)
-		}))
+		})
 
 		defer func(ch chan struct{}) {
 			// This will signal goroutines using select on this channel to terminate - like
 			// ticker routines that update the packet list UI with new data every second.
 			close(p.PsmlFinishedChan)
 
-			e.MainRun(gowid.RunFunction(func(gowid.IApp) {
+			e.MainRun(func(gowid.IApp) {
 				HandleEnd(PsmlCode, app, cb)
 				p.state = NotLoading
 				p.psmlCancelFn = nil
-			}))
+			})
 		}(p.PsmlFinishedChan)
 
 		//======================================================================
@@ -1560,7 +1562,8 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 					state = Terminated
 					if !p.psmlStoppedDeliberately_ {
 						if err != nil {
-							if _, ok := err.(*exec.ExitError); ok {
+							var exitError *exec.ExitError
+							if errors.As(err, &exitError) {
 								HandleError(PsmlCode, app, MakeUsefulError(psmlCmd, err), cb)
 							}
 						}
@@ -1684,7 +1687,8 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 						fifoPipeWriter.Close()
 						if !p.psmlStoppedDeliberately_ && !e.TailStoppedDeliberately() {
 							if err != nil {
-								if _, ok := err.(*exec.ExitError); ok {
+								var exitError *exec.ExitError
+								if errors.As(err, &exitError) {
 									HandleError(PsmlCode, app, MakeUsefulError(tailCmd, err), cb)
 								}
 							}
@@ -1879,9 +1883,9 @@ func (p *PsmlLoader) loadPsmlSync(iloader *InterfaceLoader, e iPsmlLoaderEnv, cb
 						p.Lock()
 						p.packetPsmlHeaders = append(p.packetPsmlHeaders, string(tok))
 						p.Unlock()
-						e.MainRun(gowid.RunFunction(func(app gowid.IApp) {
+						e.MainRun(func(app gowid.IApp) {
 							handlePsmlHeader(PsmlCode, app, cb)
-						}))
+						})
 					} else {
 						curPsml = append(curPsml, string(format.TranslateHexCodes(tok)))
 						curCounts = append(curCounts, len(curPsml[len(curPsml)-1]))
@@ -1964,7 +1968,7 @@ func (p *PsmlLoader) PsmlAverageLengths() []gwutil.IntOption {
 func (p *PsmlLoader) PsmlMaxLengths() []int {
 	res := make([]int, 0, len(p.packetMaxLength))
 	for _, maxer := range p.packetMaxLength {
-		res = append(res, int(maxer.max()))
+		res = append(res, maxer.max())
 	}
 	return res
 }
@@ -2117,10 +2121,10 @@ func (i *InterfaceLoader) loadIfacesSync(e iIfaceLoaderEnv, cb interface{}, app 
 				}
 			}
 
-			e.MainRun(gowid.RunFunction(func(gowid.IApp) {
+			e.MainRun(func(gowid.IApp) {
 				i.state = NotLoading
 				i.ifaceCancelFn = nil
-			}))
+			})
 
 		}()
 
@@ -2145,7 +2149,8 @@ func (i *InterfaceLoader) loadIfacesSync(e iIfaceLoaderEnv, cb interface{}, app 
 			case err = <-ifaceTermChan:
 				state = Terminated
 				if !e.PsmlStoppedDeliberately() && err != nil {
-					if _, ok := err.(*exec.ExitError); ok {
+					var exitError *exec.ExitError
+					if errors.As(err, &exitError) {
 						// This could be if termshark is started like this: cat nosuchfile.pcap | termshark -i -
 						// Then dumpcap will be started with /dev/fd/3 as its stdin, but will fail with EOF and
 						// exit status 1.
@@ -2344,9 +2349,3 @@ func TempPcapFile(tokens ...string) string {
 		termshark.DateStringForFilename(),
 	))
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

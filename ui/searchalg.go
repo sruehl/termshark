@@ -125,9 +125,3 @@ func (w *PacketSearcher) SearchPackets(term search.INeedle, cbs search.ICallback
 	}, Goroutinewg)
 
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

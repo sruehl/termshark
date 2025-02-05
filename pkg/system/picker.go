@@ -10,7 +10,7 @@ import (
 	"fmt"
 )
 
-var NoPicker error = fmt.Errorf("No file picker available")
+var NoPicker = fmt.Errorf("No file picker available")
 
 func PickFile() (string, error) {
 	return "", NoPicker

@@ -29,21 +29,21 @@ func SuggestSwitchingTerm(app gowid.IApp) {
 
 	Yes := dialog.Button{
 		Msg: "Yes",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		Action: gowid.MakeWidgetCallback("exec", func(app gowid.IApp, w gowid.IWidget) {
 			termshark.ShouldSwitchTerminal = true
 			switchTerm.Close(app)
 			RequestQuit()
-		})),
+		}),
 	}
 	No := dialog.Button{
 		Msg: "No",
 	}
 	NoAsk := dialog.Button{
 		Msg: "No, don't ask",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		Action: gowid.MakeWidgetCallback("exec", func(app gowid.IApp, w gowid.IWidget) {
 			profiles.SetConf("main.disable-term-helper", true)
 			switchTerm.Close(app)
-		})),
+		}),
 	}
 
 	term := os.Getenv("TERM")
@@ -76,10 +76,10 @@ func IsTerminalLegible(app gowid.IApp) {
 
 	YesSave := dialog.Button{
 		Msg: "Yes",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		Action: gowid.MakeWidgetCallback("exec", func(app gowid.IApp, w gowid.IWidget) {
 			profiles.SetConf("main.term", os.Getenv("TERM"))
 			saveTerm.Close(app)
-		})),
+		}),
 	}
 	NoSave := dialog.Button{
 		Msg: "No",
@@ -105,20 +105,20 @@ func IsTerminalLegible(app gowid.IApp) {
 
 	No := dialog.Button{
 		Msg: "No",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		Action: gowid.MakeWidgetCallback("exec", func(app gowid.IApp, w gowid.IWidget) {
 			close(stopC)
 			termshark.ShouldSwitchBack = true
 			legibleTerm.Close(app)
 			RequestQuit()
-		})),
+		}),
 	}
 	Yes := dialog.Button{
 		Msg: "Yes",
-		Action: gowid.MakeWidgetCallback("exec", gowid.WidgetChangedFunction(func(app gowid.IApp, w gowid.IWidget) {
+		Action: gowid.MakeWidgetCallback("exec", func(app gowid.IApp, w gowid.IWidget) {
 			close(stopC)
 			legibleTerm.Close(app)
 			saveTerm.Open(appView, gowid.RenderWithRatio{R: 0.5}, app)
-		})),
+		}),
 	}
 
 	secs := 10
@@ -171,9 +171,3 @@ func IsTerminalLegible(app gowid.IApp) {
 
 	legibleTerm.Open(appView, gowid.RenderWithRatio{R: 0.5}, app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

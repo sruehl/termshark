@@ -71,9 +71,3 @@ func TranslateHexCodes(s []byte) []byte {
 		return []byte{r[0]}
 	})
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

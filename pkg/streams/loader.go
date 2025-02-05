@@ -7,13 +7,14 @@ package streams
 import (
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
 	"strconv"
 	"sync"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 
 	"github.com/sruehl/termshark/v2"
@@ -155,7 +156,8 @@ func (c *Loader) loadStreamReassemblyAsync(pcapf string, proto string, idx int, 
 			case err = <-termChan:
 				state = pcap.Terminated
 				if !c.SuppressErrors && err != nil {
-					if _, ok := err.(*exec.ExitError); ok {
+					var exitError *exec.ExitError
+					if errors.As(err, &exitError) {
 						pcap.HandleError(pcap.StreamCode, app, pcap.MakeUsefulError(c.streamCmd, err), cb)
 					}
 				}
@@ -270,7 +272,8 @@ func (c *Loader) startStreamIndexerAsync(pcapf string, proto string, idx int, ap
 			case err = <-procWaitChan:
 				state = pcap.Terminated
 				if !c.SuppressErrors && err != nil {
-					if _, ok := err.(*exec.ExitError); ok {
+					var exitError *exec.ExitError
+					if errors.As(err, &exitError) {
 						pcap.HandleError(pcap.StreamCode, app, pcap.MakeUsefulError(c.indexerCmd, err), cb)
 					}
 				}
@@ -409,9 +412,3 @@ func decodeStreamXml(streamOut io.Reader, proto string, ctx context.Context, cb 
 }
 
 //======================================================================
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

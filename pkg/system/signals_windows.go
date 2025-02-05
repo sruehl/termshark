@@ -36,9 +36,3 @@ func IsSigCont(sig os.Signal) bool {
 func StopMyself() error {
 	return gowid.WithKVs(NotImplemented, map[string]interface{}{"feature": "SIGSTOP"})
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

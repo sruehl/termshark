@@ -144,9 +144,3 @@ func (c *Model) HeaderWidgets() []gowid.IWidget {
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

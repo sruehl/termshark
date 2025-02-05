@@ -13,7 +13,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"github.com/rs/zerolog"
 	"io"
 	"io/ioutil"
 	"net"
@@ -38,7 +37,8 @@ import (
 	"github.com/gdamore/tcell/v2/terminfo/dynamic"
 	"github.com/mattn/go-isatty"
 	"github.com/pkg/errors"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/shibukawa/configdir"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/gwutil"
@@ -102,14 +102,14 @@ var InternalErr = InternalError{}
 //======================================================================
 
 var (
-	UserGuideURL         string = "https://termshark.io/userguide"
-	FAQURL               string = "https://termshark.io/faq"
-	BugURL               string = "https://github.com/sruehl/termshark/issues/new?assignees=&labels=&template=bug_report.md&title="
-	FeatureURL           string = "https://github.com/sruehl/termshark/issues/new?assignees=&labels=&template=feature_request.md&title="
+	UserGuideURL         = "https://termshark.io/userguide"
+	FAQURL               = "https://termshark.io/faq"
+	BugURL               = "https://github.com/sruehl/termshark/issues/new?assignees=&labels=&template=bug_report.md&title="
+	FeatureURL           = "https://github.com/sruehl/termshark/issues/new?assignees=&labels=&template=feature_request.md&title="
 	OriginalEnv          []string
 	ShouldSwitchTerminal bool
 	ShouldSwitchBack     bool
-	unitsRe              *regexp.Regexp = regexp.MustCompile(`^([0-9,]+)\s*(bytes|kB|MB)?`)
+	unitsRe              = regexp.MustCompile(`^([0-9,]+)\s*(bytes|kB|MB)?`)
 )
 
 //======================================================================
@@ -239,7 +239,8 @@ func RunForStderr(prog string, args []string, env []string, stderr io.Writer) (i
 	cmd.Stderr = stderr
 	err = cmd.Run()
 	if err != nil {
-		if exerr, ok := err.(*exec.ExitError); ok {
+		var exerr *exec.ExitError
+		if errors.As(err, &exerr) {
 			ws := exerr.Sys().(syscall.WaitStatus)
 			exitCode = ws.ExitStatus()
 		}
@@ -412,7 +413,7 @@ func LoadKeyMappings() []KeyMapping {
 func SaveKeyMappings(mappings []KeyMapping) {
 	ser := make([]string, 0, len(mappings))
 	for _, mapping := range mappings {
-		ser = append(ser, fmt.Sprintf("%v %v", mapping.From, vim.KeySequence(mapping.To)))
+		ser = append(ser, fmt.Sprintf("%v %v", mapping.From, mapping.To))
 	}
 	profiles.SetConf("main.key-mappings", ser)
 }
@@ -892,7 +893,7 @@ func PrunePcapCache() error {
 	// assume the cache can grow indefinitely - in case users are now relying on this
 	// to keep old pcaps around. I don't want to delete any files without the user's
 	// explicit permission.
-	var diskCacheSize int64 = int64(profiles.ConfInt("main.disk-cache-size-mb", -1))
+	var diskCacheSize = int64(profiles.ConfInt("main.disk-cache-size-mb", -1))
 
 	if diskCacheSize == -1 {
 		log.Info().Msgf("No pcap disk cache size set. Skipping cache pruning.")
@@ -1442,9 +1443,3 @@ func Intersection[T comparable](a, b []T) ([]T, bool) {
 	}
 	return c, intersects
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

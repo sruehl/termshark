@@ -350,7 +350,7 @@ Loop:
 			ch := '.'
 			r := w.data[i]
 			if r >= 32 && r <= 126 {
-				ch = rune(byte(r))
+				ch = rune(r)
 			}
 
 			fmt.Fprintf(asciiWriter, "%c", ch)
@@ -772,9 +772,3 @@ func styleAt(canvas gowid.ICanvas, col int, row int, st convertedStyle) {
 	c = c.MergeDisplayAttrsUnder(c.WithForegroundColor(st.f).WithBackgroundColor(st.b).WithStyle(st.s))
 	canvas.SetCellAt(col, row, c)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

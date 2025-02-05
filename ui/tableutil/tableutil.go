@@ -77,9 +77,3 @@ func GotoHandler(t IGoToLineRequested) appkeys.KeyInputFn {
 		return handled
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

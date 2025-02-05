@@ -162,9 +162,3 @@ func (c copyModeTableModel) CellWidgets(row table.RowId) []gowid.IWidget {
 	}
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

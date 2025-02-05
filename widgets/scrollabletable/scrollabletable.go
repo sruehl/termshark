@@ -45,9 +45,3 @@ func (s Widget) ScrollLength() int {
 func (s Widget) ScrollPosition() int {
 	return s.CurrentRow()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

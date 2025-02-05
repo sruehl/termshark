@@ -209,9 +209,3 @@ func (p PipeSource) Close() error {
 func (p PipeSource) String() string {
 	return fmt.Sprintf("Pipe:%s(%d)", p.Descriptor, p.Fd)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

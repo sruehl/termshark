@@ -87,13 +87,13 @@ func (w *Widget) Clips(app gowid.IApp) []gowid.ICopyResult {
 	ptr := tr.(*pdmltree.Model)
 
 	atts := make([]string, 0)
-	atts = append(atts, string(ptr.NodeName))
+	atts = append(atts, ptr.NodeName)
 	for k, v := range ptr.Attrs {
 		atts = append(atts, fmt.Sprintf("%s=\"%s\"", k, v))
 	}
 
 	var tidyxmlstr string
-	messyxmlstr := fmt.Sprintf("<%s>%s</%s>", strings.Join(atts, " "), ptr.Content, string(ptr.NodeName))
+	messyxmlstr := fmt.Sprintf("<%s>%s</%s>", strings.Join(atts, " "), ptr.Content, ptr.NodeName)
 	buf := bytes.Buffer{}
 	if termshark.IndentPdml(bytes.NewReader([]byte(messyxmlstr)), &buf) != nil {
 		tidyxmlstr = messyxmlstr
@@ -150,9 +150,3 @@ func (f *Walker) At(lpos list.IWalkerPosition) gowid.IWidget {
 		return w
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

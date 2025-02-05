@@ -11,7 +11,7 @@ import (
 	"sort"
 
 	"github.com/gdamore/tcell/v2"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/widgets/button"
 	"github.com/sruehl/gowid/widgets/clicktracker"
@@ -139,7 +139,7 @@ func rebuildPsmlFieldListBox(app gowid.IApp) (int, int) {
 	colsMenuItems := make([]menuutil.SimpleMenuItem, 0)
 
 	columnNames := make([]string, 0)
-	for k, _ := range shark.AllowedColumnFormats {
+	for k := range shark.AllowedColumnFormats {
 		columnNames = append(columnNames, k)
 	}
 	sort.Strings(columnNames)
@@ -291,7 +291,7 @@ func openEditColumns(app gowid.IApp) {
 	okButton := dialog.Button{
 		Msg: "Ok",
 		Action: gowid.MakeWidgetCallback("cb",
-			gowid.WidgetChangedFunction(func(app gowid.IApp, widget gowid.IWidget) {
+			func(app gowid.IApp, widget gowid.IWidget) {
 				for i := 0; i < len(pcols.spec); i++ {
 					if pcols.spec[i].Field.Token == "%Cus" && !pcols.widgets[i].customFilter.IsValid() {
 						OpenMessage(fmt.Sprintf("Custom column %d is invalid", i+1), appView, app)
@@ -316,7 +316,7 @@ func openEditColumns(app gowid.IApp) {
 				} else {
 					RequestReload(app)
 				}
-			}),
+			},
 		),
 	}
 
@@ -350,9 +350,3 @@ func openEditColumns(app gowid.IApp) {
 
 	editColsDialog.Open(appView, ratio(0.7), app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

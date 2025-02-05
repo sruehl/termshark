@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 
 	"github.com/sruehl/termshark/v2"
@@ -134,9 +134,3 @@ func (t ManageCapinfoCache) OnNewSource(pcap.HandlerCode, gowid.IApp) {
 func (t ManageCapinfoCache) OnClear(pcap.HandlerCode, gowid.IApp) {
 	clearCapinfoState()
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

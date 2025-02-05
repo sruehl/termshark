@@ -29,7 +29,7 @@ func New(hi, mid, lo gowid.IColor) *Color {
 }
 
 func (c *Color) ToTCellColor(mode gowid.ColorMode) (gowid.TCellColor, bool) {
-	var col gowid.IColor = c.mode16
+	var col = c.mode16
 	switch mode {
 	case gowid.Mode24BitColors:
 		col = c.modeHi
@@ -40,9 +40,3 @@ func (c *Color) ToTCellColor(mode gowid.ColorMode) (gowid.TCellColor, bool) {
 	}
 	return col.ToTCellColor(mode)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -238,9 +238,3 @@ func (s *BytesSearchCallbacks) SearchPacketsResult(res search.Result, app gowid.
 		curStructWidgetState = curPacketStructWidget.State()
 	}))
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

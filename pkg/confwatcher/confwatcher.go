@@ -8,8 +8,8 @@ import (
 	"os"
 	"sync"
 
-	log "github.com/rs/zerolog/log"
-	fsnotify "gopkg.in/fsnotify/fsnotify.v1"
+	"github.com/rs/zerolog/log"
+	"gopkg.in/fsnotify/fsnotify.v1"
 
 	"github.com/sruehl/termshark/v2"
 )
@@ -93,9 +93,3 @@ func (c *ConfigWatcher) ConfigChanged() <-chan struct{} {
 //======================================================================
 
 var Goroutinewg *sync.WaitGroup
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

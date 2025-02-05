@@ -4,11 +4,4 @@
 
 package termshark
 
-var Version string = "v2.4.0+"
-
-//======================================================================
-// Local Variables:
-// indent-tabs-mode: nil
-// tab-width: 4
-// fill-column: 78
-// End:
+var Version = "v2.4.0+"

@@ -145,7 +145,7 @@ type ConvsModel struct {
 
 func (m ConvsModel) GetAFilter(row int, dir Direction) string {
 	line := m.Data[row]
-	parms := []string{}
+	var parms []string
 	for _, idx := range m.proto.AIndex() {
 		parms = append(parms, line[idx])
 	}
@@ -161,7 +161,7 @@ func (m ConvsModel) GetAFilter(row int, dir Direction) string {
 
 func (m ConvsModel) GetBFilter(row int, dir Direction) string {
 	line := m.Data[row]
-	parms := []string{}
+	var parms []string
 	for _, idx := range m.proto.BIndex() {
 		parms = append(parms, line[idx])
 	}
@@ -360,7 +360,7 @@ func (w *ConvsUiWidget) SetUseFilter(val bool) {
 }
 
 func (w *ConvsUiWidget) construct() {
-	convs := make([]*oneConvWidget, 0)
+	_convs := make([]*oneConvWidget, 0)
 
 	header := w.makeHeaderConvsUiWidget()
 
@@ -382,7 +382,7 @@ func (w *ConvsUiWidget) construct() {
 
 		w.tabIndex[p] = i
 		newconv := newOneConv(p)
-		convs = append(convs, newconv)
+		_convs = append(_convs, newconv)
 
 		if i == 0 {
 			w.convHolder = holder.New(newconv)
@@ -533,7 +533,7 @@ func (w *ConvsUiWidget) construct() {
 			ApplyBefore: true,
 		},
 	)
-	w.convs = convs
+	w.convs = _convs
 }
 
 func (w *ConvsUiWidget) ReloadNeeded() {
@@ -733,7 +733,7 @@ func (w *ConvsUiWidget) OnData(data string, app gowid.IApp) {
 	var comps []table.ICompare
 	var cur string
 	var next string
-	var ports bool = false
+	var ports = false
 
 	var (
 		addra      string
@@ -1057,9 +1057,3 @@ func (c CsvTableCopier) CopyTable() []gowid.ICopyResult {
 
 var _ copymodetable.IRowCopier = CsvTableCopier{}
 var _ copymodetable.ITableCopier = CsvTableCopier{}
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -4,12 +4,13 @@
 package number
 
 import (
+	"testing"
+
 	"github.com/gdamore/tcell/v2"
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/gwtest"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 //======================================================================
@@ -52,9 +53,3 @@ func TestNumber1(t *testing.T) {
 	clickat(4, 0)
 	assert.Equal(t, v+1-2, w.Value)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

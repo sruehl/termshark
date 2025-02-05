@@ -8,7 +8,7 @@ package ui
 import (
 	"fmt"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/gwutil"
 	"github.com/sruehl/gowid/widgets/button"
@@ -562,9 +562,3 @@ func (p *psmlColumnsModel) IdentifierToRow(rowid table.RowId) (int, bool) {
 		return int(rowid), true
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

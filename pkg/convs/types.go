@@ -169,9 +169,3 @@ func (t TCP) AIndex() []int {
 func (t TCP) BIndex() []int {
 	return []int{2, 3}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

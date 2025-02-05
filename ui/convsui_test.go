@@ -48,9 +48,3 @@ func TestScan1(t *testing.T) {
 	assert.Equal(t, "4.160565000", start)
 	assert.Equal(t, "127.0.0.1:9191", addrb)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

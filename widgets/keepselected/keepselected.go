@@ -43,9 +43,3 @@ func (w *Widget) SubWidget() gowid.IWidget {
 func (w *Widget) SetSubWidget(wi gowid.IWidget, app gowid.IApp) {
 	w.sub = wi
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

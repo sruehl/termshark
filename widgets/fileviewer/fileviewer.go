@@ -86,9 +86,3 @@ func New(vfile string, cb gowid.IWidgetChangedCallback, opts ...Options) (*Widge
 
 	return res, errTerm
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

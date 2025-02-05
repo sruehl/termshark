@@ -187,9 +187,3 @@ func TestFolders(t *testing.T) {
 	val, err = TsharkSetting("Deliberately missing")
 	assert.Error(t, err)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

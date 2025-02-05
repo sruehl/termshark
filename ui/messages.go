@@ -255,9 +255,3 @@ func WriteMarks(p *flags.Parser, marks map[rune]int, w io.Writer) {
 
 	fmt.Fprintln(w)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

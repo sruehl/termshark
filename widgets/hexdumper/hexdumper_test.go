@@ -6,7 +6,7 @@ package hexdumper
 import (
 	"testing"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/gwtest"
 	"github.com/stretchr/testify/assert"
@@ -28,9 +28,3 @@ func TestDump2(t *testing.T) {
 	log.Info().Msgf("Canvas2 is %s", canvas2.String())
 	assert.Equal(t, 1, canvas2.BoxRows())
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

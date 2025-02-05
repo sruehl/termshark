@@ -46,9 +46,3 @@ func (w *Widget) UserInput(ev interface{}, size gowid.IRenderSize, focus gowid.S
 	focus.Selected = true
 	return w.IWidget.UserInput(ev, size, focus, app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -37,9 +37,3 @@ func (b TriState) MarshalFlag() string {
 		return "unset"
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

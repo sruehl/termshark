@@ -55,9 +55,3 @@ func (s *SearchStopper) DoIfStopped(f func()) {
 		s.Requested = false
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

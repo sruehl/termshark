@@ -44,9 +44,3 @@ func isUnixSig(sig os.Signal, usig syscall.Signal) bool {
 	}
 	return false
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

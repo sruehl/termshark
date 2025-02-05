@@ -117,9 +117,3 @@ func UnsnappyMe(res interface{}, r io.Reader) {
 		panic(err)
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

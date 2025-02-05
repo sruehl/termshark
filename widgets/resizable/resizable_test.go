@@ -29,9 +29,3 @@ func TestOffset1(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, offs, offs2)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

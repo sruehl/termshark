@@ -270,9 +270,3 @@ func (w *StructSearchCallbacks) CheckNode(tr tree.IModel, pos tree.IPos) bool {
 
 	return w.term.Search(tr.Leaf()) != -1
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

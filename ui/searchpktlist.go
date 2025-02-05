@@ -134,7 +134,7 @@ Loop:
 			column = len(datas)
 		}
 
-		for j, data := range datas[column:len(datas)] {
+		for j, data := range datas[column:] {
 			mpos := term.Search(data)
 			if mpos != -1 {
 				coords := ListResult{
@@ -210,9 +210,3 @@ func (s *ListSearchCallbacks) SearchPacketsResult(res search.Result, app gowid.I
 		curStructWidgetState = curPacketStructWidget.State()
 	}))
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

@@ -133,9 +133,3 @@ func New(opts ...Options) *Widget {
 
 	return res
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

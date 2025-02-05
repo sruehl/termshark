@@ -15,7 +15,7 @@ import (
 	"strconv"
 	"sync"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/widgets/table"
 	"gitlab.com/jonas.jasas/condchan"
@@ -523,9 +523,3 @@ func (w *FilterSearchCallbacks) runProcess(ctx context.Context, psmlCmd pcap.IPc
 
 	return
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

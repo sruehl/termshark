@@ -22,9 +22,3 @@ func (t *TerminalSignals) Set(tty string) error {
 	t.set = true
 	return nil
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

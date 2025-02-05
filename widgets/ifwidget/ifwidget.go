@@ -89,9 +89,3 @@ func (w *Widget) Render(size gowid.IRenderSize, focus gowid.Selector, app gowid.
 		return w.wfalse.Render(size, focus, app)
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

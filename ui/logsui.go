@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	log "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/sruehl/gowid"
 	"github.com/sruehl/gowid/widgets/holder"
 	"github.com/sruehl/gowid/widgets/terminal"
@@ -99,9 +99,3 @@ func openFileUi(file string, delete bool, opt fileviewer.Options, app gowid.IApp
 func closeFileUi(app gowid.IApp) {
 	appViewNoKeys.SetSubWidget(mainView, app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:

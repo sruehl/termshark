@@ -59,9 +59,3 @@ func OpenSimpleMenu(open bool, mu *menu.Widget, site menu.ISite, app gowid.IApp)
 		return true
 	}
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

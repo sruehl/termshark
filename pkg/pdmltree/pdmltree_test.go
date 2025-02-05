@@ -11,7 +11,7 @@ import (
 
 //======================================================================
 
-var p1 string = `<packet>
+var p1 = `<packet>
   <proto name="geninfo" pos="0" showname="General information" size="1453">
     <field name="num" pos="0" show="1" showname="Number" value="1" size="1453"/>
     <field name="len" pos="0" show="1453" showname="Frame Length" value="5ad" size="1453"/>
@@ -204,9 +204,3 @@ func TestPdml1(t *testing.T) {
 	assert.Equal(t, 8, len(tree.Children_))
 	assert.Equal(t, 13, len(tree.Children_[0].Children_))
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

@@ -592,9 +592,3 @@ func TestIfaceNewFilter(t *testing.T) {
 func TestKeepThisLast2(t *testing.T) {
 	TestKeepThisLast(t)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

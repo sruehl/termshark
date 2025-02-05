@@ -26,9 +26,3 @@ func TestFields1(t *testing.T) {
 	assert.IsType(t, Field{}, m2)
 	assert.Equal(t, m2.(Field).Type, FT_UINT16)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 78
-// End:

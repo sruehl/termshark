@@ -179,9 +179,3 @@ func UserInput(w IAppInput, ev interface{}, size gowid.IRenderSize, focus gowid.
 func Render(w IWidget, size gowid.IRenderSize, focus gowid.Selector, app gowid.IApp) gowid.ICanvas {
 	return w.SubWidget().Render(size, focus, app)
 }
-
-//======================================================================
-// Local Variables:
-// mode: Go
-// fill-column: 110
-// End:
