@@ -9,7 +9,7 @@ import "github.com/jessevdk/go-flags"
 
 //======================================================================
 
-// Used to determine if we should run tshark instead e.g. stdout is not a tty
+// Tshark is used to determine if we should run tshark instead e.g. stdout is not a tty
 type Tshark struct {
 	PassThru    string `long:"pass-thru" default:"auto" optional:"true" optional-value:"true" choice:"yes" choice:"no" choice:"auto" choice:"true" choice:"false" description:"Run tshark instead (auto => if stdout is not a tty)."`
 	Profile     string `long:"profile" short:"C" description:"Start with this configuration profile." value-name:"<profile>"`
@@ -17,7 +17,7 @@ type Tshark struct {
 	TailSwitch
 }
 
-// Termshark's own command line arguments. Used if we don't pass through to tshark.
+// Termshark 's own command line arguments. Used if we don't pass through to tshark.
 type Termshark struct {
 	Ifaces          []string       `value-name:"<interfaces>" short:"i" description:"Interface(s) to read."`
 	Pcap            flags.Filename `value-name:"<infile/fifo>" short:"r" description:"Pcap file/fifo to read. Use - for stdin."`
@@ -30,7 +30,7 @@ type Termshark struct {
 	PlatformSwitches
 	Profile  string   `long:"profile" short:"C" description:"Start with this configuration profile." value-name:"<profile>"`
 	PassThru string   `long:"pass-thru" default:"auto" optional:"true" optional-value:"true" choice:"auto" choice:"true" choice:"false" description:"Run tshark instead (auto => if stdout is not a tty)."`
-	LogTty   bool     `long:"log-tty" optional:"true" optional-value:"true" choice:"true" choice:"false" description:"Log to the terminal."`
+	LogTty   bool     `long:"log-tty" optional:"true" optional-value:"true" description:"Log to the terminal."`
 	Debug    TriState `long:"debug" default:"unset" hidden:"true" optional:"true" optional-value:"true" description:"Enable termshark debugging. See https://termshark.io/userguide."`
 	Help     bool     `long:"help" short:"h" optional:"true" optional-value:"true" description:"Show this help message."`
 	Version  []bool   `long:"version" short:"v" optional:"true" optional-value:"true" description:"Show version information."`
@@ -40,7 +40,7 @@ type Termshark struct {
 	} `positional-args:"yes"`
 }
 
-// If args are passed through to tshark (e.g. stdout not a tty), then
+// TermsharkOnly is set if args are passed through to tshark (e.g. stdout not a tty), then
 // strip these out so tshark doesn't fail.
 var TermsharkOnly = []string{"--pass-thru", "--profile", "--log-tty", "--debug", "--tail"}
 

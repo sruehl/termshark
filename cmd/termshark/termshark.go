@@ -1199,7 +1199,7 @@ Loop:
 			// Start tcell/gowid events for keys, etc
 			appRunner.Start()
 
-			// Reinstate  our terminal overrides that allow ctrl-z
+			// Reinstate  our terminal overrides that allow ctrl-z2
 			if err := ctrlzLineDisc.Set(usetty); err != nil {
 				ui.OpenError(fmt.Sprintf("Unexpected error setting Ctrl-z handler: %v\n", err), app)
 			}
